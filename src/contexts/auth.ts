@@ -35,7 +35,7 @@ export function useAuth(): {
     password: string,
   ) {
     try {
-      const response = await axios.post('/auth/login/', {
+      const response = await axios.post('/auth/login', {
         email,
         password,
       });
