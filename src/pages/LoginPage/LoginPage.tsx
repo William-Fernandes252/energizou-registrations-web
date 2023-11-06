@@ -87,9 +87,9 @@ export default function LoginPage() {
         onClose={(_, reason) => handleClose(reason)}>
         <Alert
           onClose={() => handleClose()}
-          severity="success"
+          severity="error"
           sx={{ width: '100%' }}>
-          {error!.message}
+          {error && error.message}
         </Alert>
       </Snackbar>
     </>
