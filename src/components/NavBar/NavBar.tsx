@@ -75,7 +75,7 @@ export default function NavBar() {
   );
 
   const navElements = [...navItems.entries()].map(([path, page]) => (
-    <Button key={path} component={NavLink} to={path}>
+    <Button key={path} sx={{ color: 'white' }} component={NavLink} to={path}>
       {page}
     </Button>
   ));
