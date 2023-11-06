@@ -20,7 +20,7 @@ export default function RootPage() {
   }, [isAuthenticated, pathname, navigate]);
 
   return (
-    <Container maxWidth="xl" sx={{ height: '100%' }}>
+    <Container maxWidth="xl" sx={{ height: '100vh' }}>
       <NavBar />
       <Box component={'main'} sx={{ p: 3 }}>
         <Outlet />
