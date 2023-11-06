@@ -1,4 +1,4 @@
-import { Box, Button, Paper } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -6,39 +6,11 @@ import {
   type GridEventListener,
   GridRowEditStopReasons,
   type GridRowId,
-  type GridRowModel,
-  GridRowModes,
   GridRowModesModel,
-  type GridRowsProp,
-  GridToolbarContainer,
-  type GridRowSelectionModel,
 } from '@mui/x-data-grid';
-import { Add, Cancel, Delete, Edit, Save } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
 import { useState } from 'react';
 import { useCompany } from '@/models/company';
-
-type EditToolbarProps = {
-  setRows: (
-    newRows: (
-      oldRows: GridRowsProp<EnergizouRegistrations.Models.Company>,
-    ) => GridRowsProp<EnergizouRegistrations.Models.Company>,
-  ) => void;
-  setRowModesModel: (
-    newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
-  ) => void;
-  rowsSelected: GridRowSelectionModel;
-  onDeleteSeleted: (ids: GridRowId[]) => void;
-};
-
-function EditToolbar({ setRows, setRowModesModel }: EditToolbarProps) {
-  return (
-    <GridToolbarContainer>
-      <Button color="primary" startIcon={<Add />}>
-        Add Product
-      </Button>
-    </GridToolbarContainer>
-  );
-}
 
 type Props = {
   companies: EnergizouRegistrations.Models.Company[];
@@ -50,6 +22,7 @@ type Props = {
     pageSize: number;
   }) => void;
   count: number;
+  onSelected: (company: EnergizouRegistrations.Models.Company) => void;
 };
 
 export default function CompaniesTable({
@@ -58,12 +31,15 @@ export default function CompaniesTable({
   paginationModel,
   onPaginationModelChange,
   count,
+  onSelected,
 }: Props) {
-  const [rows, setRows] = useState<
-    Partial<EnergizouRegistrations.Models.Company>[]
-  >([...companies]);
+  const rows = [
+    ...companies,
+  ] as Partial<EnergizouRegistrations.Models.Company>[];
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const { delete: deleteProduct } = useCompany();
+  const [selected, setSelected] =
+    useState<EnergizouRegistrations.Models.Company | null>(null);
 
   const handleRowEditStop: GridEventListener<'rowEditStop'> = (
     params,
@@ -136,20 +112,20 @@ export default function CompaniesTable({
           ]}
           onPaginationModelChange={onPaginationModelChange}
           paginationMode="server"
-          checkboxSelection
           editMode="row"
+          onRowSelectionModelChange={newSelectedRow => {
+            if (newSelectedRow.length > 0) {
+              onSelected(
+                rows.find(
+                  company => company.cnpj === newSelectedRow[0],
+                ) as EnergizouRegistrations.Models.Company,
+              );
+            }
+          }}
+          rowSelectionModel={selected ? [selected.cnpj] : []}
           rowModesModel={rowModesModel}
           onRowModesModelChange={handleRowModesModelChange}
           onRowEditStop={handleRowEditStop}
-          slots={{
-            toolbar: EditToolbar,
-          }}
-          slotProps={{
-            toolbar: {
-              setRowModesModel,
-              setRows,
-            },
-          }}
           rowCount={count}
           loading={isLoading}
         />

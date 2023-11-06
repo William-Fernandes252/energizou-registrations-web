@@ -12,14 +12,18 @@ export function useCompanies(
   page: number,
   limit: number,
   params?: {
-    name?: EnergizouRegistrations.Models.Company['reason'];
+    sort?: keyof Pick<
+      EnergizouRegistrations.Models.Company,
+      'reason' | 'created'
+    >;
+    order?: 'ASC' | 'DESC';
   },
   options: EnergizouRegistrations.RestAPI.UseModelOptions = {},
 ) {
   const axios = useAxios();
   const queryClient = useQueryClient();
   const { data, error, isLoading } = useQuery(
-    ['products', { page, limit, ...params }],
+    ['companies', { page, limit, ...params }],
     async () => {
       return (
         await axios.get(resourceUri, {
@@ -60,7 +64,7 @@ export function useCompanies(
     isLoading: boolean;
     error: AxiosError<EnergizouRegistrations.RestAPI.ErrorResponseData>;
     create: (
-      product: Omit<EnergizouRegistrations.Models.Company, 'id'>,
+      registrationData: Omit<EnergizouRegistrations.Models.Company, 'id'>,
     ) => Promise<EnergizouRegistrations.Models.Company>;
   };
 }
@@ -76,7 +80,7 @@ export function useCompany(
   >(null);
 
   const query = useQuery(
-    ['products', cnpj],
+    ['companies', cnpj],
     async () => {
       return cnpj ? (await axios.get(`${resourceUri}${cnpj}/`)).data : null;
     },
@@ -103,7 +107,7 @@ export function useCompany(
     return new Promise((resolve, reject) => {
       updateMutation.mutate(companyPatch, {
         onSuccess(data, variables) {
-          queryClient.setQueryData(['products', variables.cnpj], data);
+          queryClient.setQueryData(['companies', variables.cnpj], data);
           resolve(data);
         },
         onError(error) {
@@ -118,17 +122,23 @@ export function useCompany(
       return (await axios.delete(`${resourceUri}${companyId || cnpj}/`)).data;
     },
   );
-  async function deleteProduct(
+  async function deleteCompany(
     companyId?: EnergizouRegistrations.Models.Company['cnpj'],
   ) {
     return new Promise((resolve, reject) => {
       deleteMutation.mutate(companyId, {
         onSuccess(data) {
-          queryClient.invalidateQueries('products');
+          queryClient.invalidateQueries('companies');
           resolve(data);
+          if (options.onSuccess) {
+            options.onSuccess(data);
+          }
         },
         onError(error) {
           reject(error);
+          if (options.onError) {
+            options.onError(error);
+          }
         },
       });
     });
@@ -139,6 +149,6 @@ export function useCompany(
     error: query.error,
     getCompany: setCnpj,
     update: updateCompany,
-    delete: deleteProduct,
+    delete: deleteCompany,
   };
 }

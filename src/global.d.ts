@@ -11,6 +11,7 @@ namespace EnergizouRegistrations {
       representative: string;
       users: User[];
       adress: string;
+      created: Date;
     }
 
     interface User {

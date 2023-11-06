@@ -1,11 +1,20 @@
 import CompaniesTable from '@/components/CompaniesTable';
 import PageTitleBox from '@/components/PageTitleBox';
-import { useCompanies } from '@/models/company';
+import CompanyDetailsDialog from '@/components/CompanyDetailsDialog';
+import { useCompanies, useCompany } from '@/models/company';
 import { Alert, Box, Grid, LinearProgress } from '@mui/material';
 import { useState } from 'react';
 
 export default function CompaniesPage() {
-  const [params] = useState({ name: '', description: '' });
+  const [params] = useState<{
+    sort: keyof Pick<
+      EnergizouRegistrations.Models.Company,
+      'reason' | 'created'
+    >;
+    order: 'ASC' | 'DESC';
+  }>({ sort: 'reason', order: 'ASC' });
+  const [selected, setSelected] =
+    useState<EnergizouRegistrations.Models.Company | null>(null);
   const [paginationModel, setPaginationModel] = useState({
     page: 1,
     pageSize: 20,
@@ -16,6 +25,7 @@ export default function CompaniesPage() {
     create,
     error,
   } = useCompanies(paginationModel.page, paginationModel.pageSize, params);
+  const { delete: deleteCompany } = useCompany();
 
   function handlePaginationModelChange(newPaginationModel: {
     page: number;
@@ -27,6 +37,10 @@ export default function CompaniesPage() {
     ) {
       setPaginationModel(newPaginationModel);
     }
+  }
+
+  function handleClose() {
+    setSelected(null);
   }
 
   let content: JSX.Element;
@@ -49,6 +63,9 @@ export default function CompaniesPage() {
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
         count={products.count}
+        onSelected={company => {
+          setSelected(company);
+        }}
       />
     );
   }
@@ -63,6 +80,11 @@ export default function CompaniesPage() {
           </Grid>
         </Grid>
       </Box>
+      <CompanyDetailsDialog
+        onClose={handleClose}
+        company={selected}
+        onDelete={deleteCompany}
+      />
     </>
   );
 }
