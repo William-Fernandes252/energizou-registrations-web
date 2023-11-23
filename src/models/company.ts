@@ -1,6 +1,6 @@
 import { useQueryClient, useQuery, useMutation } from 'react-query';
 import type { AxiosError } from 'axios';
-import { useAxios } from '@/contexts/axios';
+import { axiosInstance as axios } from '@/axios';
 import { useState } from 'react';
 
 const resourceUri = '/products/';
@@ -20,7 +20,6 @@ export function useCompanies(
   },
   options: EnergizouRegistrations.RestAPI.UseModelOptions = {},
 ) {
-  const axios = useAxios();
   const queryClient = useQueryClient();
   const { data, error, isLoading } = useQuery(
     ['companies', { page, limit, ...params }],
@@ -72,7 +71,6 @@ export function useCompanies(
 export function useCompany(
   options: EnergizouRegistrations.RestAPI.UseModelOptions = {},
 ) {
-  const axios = useAxios();
   const queryClient = useQueryClient();
 
   const [cnpj, setCnpj] = useState<

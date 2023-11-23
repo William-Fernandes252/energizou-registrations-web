@@ -7,7 +7,6 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import { RouterProvider } from 'react-router-dom';
-import { AxiosInstanceProvider } from './providers/axios';
 import { AuthProvider } from './providers/auth';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -33,13 +32,11 @@ const theme = createTheme({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <AxiosInstanceProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </AuthProvider>
-      </AxiosInstanceProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </AuthProvider>
     </ThemeProvider>
   </React.StrictMode>,
 );

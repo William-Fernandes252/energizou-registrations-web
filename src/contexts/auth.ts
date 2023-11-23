@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { useAxios } from './axios';
+import { axiosInstance as axios } from '@/axios';
 import { jwtDecode } from 'jwt-decode';
 import { AxiosError } from 'axios';
 
@@ -26,7 +26,6 @@ export function useAuth(): {
   logout: () => void;
   isAuthenticated: boolean;
 } {
-  const axios = useAxios();
   const user = useContext(UserContext);
   const setUser = useContext(UserSetterContext)!;
 
