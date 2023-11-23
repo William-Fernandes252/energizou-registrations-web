@@ -1,27 +1,29 @@
 import { useState, type FormEvent } from 'react';
-import {
-  Card,
-  CardContent,
-  TextField,
-  Grid,
-  Snackbar,
-  Alert,
-} from '@mui/material';
+import { Card, CardContent, TextField, Grid, Alert } from '@mui/material';
 import { useAuth } from '@/contexts/auth';
 import { LoadingButton } from '@mui/lab';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const [loginForm, setLoginForm] = useState<{
+    email: EnergizouRegistrations.Models.User['email'];
+    password: string;
+  }>({
+    email: '',
+    password: '',
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const showError = Boolean(error);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      await login('email', 'password');
+      await login(loginForm.email, loginForm.password);
+      navigate('/');
     } catch (error) {
       setError(error as Error);
     } finally {
@@ -29,11 +31,9 @@ export default function LoginPage() {
     }
   }
 
-  function handleClose(reason?: string) {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setError(null);
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.target;
+    setLoginForm(prev => ({ ...prev, [name]: value }));
   }
 
   return (
@@ -55,6 +55,7 @@ export default function LoginPage() {
                     type="email"
                     required
                     name="email"
+                    onChange={handleChange}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -64,6 +65,7 @@ export default function LoginPage() {
                     variant="outlined"
                     type="password"
                     name="password"
+                    onChange={handleChange}
                     required
                   />
                 </Grid>
@@ -73,25 +75,19 @@ export default function LoginPage() {
                 variant="contained"
                 color="primary"
                 fullWidth
-                style={{ marginTop: 16 }}
+                sx={{ mt: 2 }}
                 loading={loading}>
                 Login
               </LoadingButton>
+              {error && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                  {error && error.message}
+                </Alert>
+              )}
             </form>
           </CardContent>
         </Card>
       </Grid>
-      <Snackbar
-        open={showError}
-        autoHideDuration={6000}
-        onClose={(_, reason) => handleClose(reason)}>
-        <Alert
-          onClose={() => handleClose()}
-          severity="error"
-          sx={{ width: '100%' }}>
-          {error && error.message}
-        </Alert>
-      </Snackbar>
     </>
   );
 }
