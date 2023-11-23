@@ -8,12 +8,11 @@ import '@fontsource/roboto/700.css';
 
 import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './providers/auth';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
+import { queryClient } from './query-client';
 
 import { router } from '@/routes';
 import { createTheme, ThemeProvider } from '@mui/material';
-
-const queryClient = new QueryClient();
 
 const theme = createTheme({
   palette: {
