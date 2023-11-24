@@ -7,15 +7,21 @@ import {
   useRouteError,
   useSearchParams,
 } from 'react-router-dom';
+import type { AxiosInstance } from 'axios';
 
-export async function companiesLoader({ request }: { request: Request }) {
-  const url = new URL(request.url);
-  const page = url.searchParams.get('page') || 1;
-  const limit = url.searchParams.get('limit') || 20;
-  const sort = (url.searchParams.get('sort') ||
-    'reason') as EnergizouRegistrations.RestAPI.CompanySortableField;
-  const order = url.searchParams.get('order') as 'ASC' | 'DESC';
-  return await getCompanies(Number(page), Number(limit), { sort, order });
+export function getCompaniesLoader(axiosInstance: AxiosInstance) {
+  return async function ({ request }: { request: Request }) {
+    const url = new URL(request.url);
+    const page = url.searchParams.get('page') || 1;
+    const limit = url.searchParams.get('limit') || 20;
+    const sort = (url.searchParams.get('sort') ||
+      'reason') as EnergizouRegistrations.RestAPI.CompanySortableField;
+    const order = url.searchParams.get('order') as 'ASC' | 'DESC';
+    return await getCompanies(axiosInstance, Number(page), Number(limit), {
+      sort,
+      order,
+    });
+  };
 }
 
 export default function CompanyListPage() {
@@ -29,7 +35,9 @@ export default function CompanyListPage() {
     >;
     order: 'ASC' | 'DESC';
   });
-  const data = useLoaderData() as Awaited<ReturnType<typeof companiesLoader>>;
+  const data = useLoaderData() as Awaited<
+    ReturnType<ReturnType<typeof getCompaniesLoader>>
+  >;
   const error: unknown | null = useRouteError();
 
   const paginationModel = {

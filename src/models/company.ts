@@ -1,6 +1,5 @@
-import { axiosInstance as axios } from '@/axios';
 import { ServerError, ValidationError } from '@/errors';
-import { AxiosError } from 'axios';
+import { AxiosError, type AxiosInstance } from 'axios';
 
 const resourceUri = '/companies/';
 
@@ -11,6 +10,7 @@ export type ListResponse =
  * @throws `ServerError` when `response.status` is not 200
  */
 export async function getCompanies(
+  axiosInstance: AxiosInstance,
   page: number,
   limit: number,
   params?: {
@@ -19,7 +19,7 @@ export async function getCompanies(
   },
 ): Promise<ListResponse> {
   try {
-    const { data } = await axios.get(resourceUri, {
+    const { data } = await axiosInstance.get(resourceUri, {
       params: { page, limit, ...params },
     });
     return data;
@@ -36,10 +36,11 @@ export async function getCompanies(
  * @throws `AxiosError` when `response.status` is not 201
  */
 export async function registerCompany(
+  axiosInstance: AxiosInstance,
   company: EnergizouRegistrations.RestAPI.RegisterCompanyForm,
 ): Promise<EnergizouRegistrations.Models.Company> {
   try {
-    const { data } = await axios.post(resourceUri, company);
+    const { data } = await axiosInstance.post(resourceUri, company);
     return data;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
