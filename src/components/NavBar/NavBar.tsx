@@ -26,7 +26,7 @@ export default function NavBar() {
 
   const navItems = new Map<string, string>();
   if (isAuthenticated) {
-    navItems.set('/companies', 'Cliente');
+    navItems.set('/companies', 'Clientes');
     navItems.set('/companies/new', 'Cadastrar cliente');
   } else {
     navItems.set('/login', 'Login');
