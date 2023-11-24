@@ -18,7 +18,7 @@ export async function companiesLoader({ request }: { request: Request }) {
   return await getCompanies(Number(page), Number(limit), { sort, order });
 }
 
-export default function CompaniesPage() {
+export default function CompanyListPage() {
   const [searchParams, setSearchParams] = useSearchParams({
     sort: 'reason',
     order: 'ASC',

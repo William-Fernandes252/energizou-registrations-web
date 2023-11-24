@@ -1,5 +1,5 @@
 import IndexPage from '@/pages/IndexPage';
-import CompaniesPage from '@/pages/CompaniesPage';
+import CompanyListPage from '@/pages/CompanyListPage';
 import Root from '@/pages';
 import { createBrowserRouter, type RouteObject } from 'react-router-dom';
 import LoginPage from '@/pages/LoginPage';
@@ -16,7 +16,7 @@ const routes: RouteObject[] = [
       },
       {
         path: 'companies',
-        element: <CompaniesPage />,
+        element: <CompanyListPage />,
         children: [
           {
             path: 'new',
