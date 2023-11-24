@@ -10,7 +10,7 @@ namespace EnergizouRegistrations {
       phone: string;
       representative: string;
       users: User[];
-      adress: string;
+      address: string;
       created: Date;
     }
 
@@ -21,13 +21,13 @@ namespace EnergizouRegistrations {
       email: string;
     }
 
-    interface Adress {
+    interface Address {
       street: string;
       number: string;
       cep: string;
     }
 
-    type CompanyPreview = Omit<Company, 'users' | 'adress'>;
+    type CompanyPreview = Omit<Company, 'users' | 'address'>;
   }
 
   namespace RestAPI {
@@ -64,10 +64,10 @@ namespace EnergizouRegistrations {
 
     type ResponseData<T extends Resource> = T;
 
-    type RegisterCompanyForm = Omit<Models.Company, 'users' | 'adress'> & {
+    type RegisterCompanyForm = Omit<Models.Company, 'users' | 'address'> & {
       password: string;
     } & Omit<User, 'id'> &
-      Adress;
+      Address;
 
     type UseModelOptions = {
       onError?: (error: unknown) => void;
