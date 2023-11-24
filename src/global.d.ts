@@ -55,7 +55,8 @@ namespace EnergizouRegistrations {
     };
 
     type ValidationError<T extends Resource> = {
-      [key: keyof Resource]: string[];
+      errors: string[];
+      message: string;
     };
 
     type ListResponseData<T extends Resource> = T extends Models.PaginatedModel
@@ -73,5 +74,23 @@ namespace EnergizouRegistrations {
       onError?: (error: unknown) => void;
       onSuccess?: (data: unknown) => void;
     };
+
+    type CompanyFilterableField = keyof Pick<
+      Models.Company,
+      'reason' | 'cnpj' | 'created'
+    >;
+    type CompanySortableField = keyof Pick<
+      Models.Company,
+      'reason' | 'created'
+    >;
+  }
+
+  namespace Errors {
+    type ErrorOptions = { message: string; action: string; cause?: unknown };
+    interface Error {
+      readonly message: string;
+      readonly action: string;
+      readonly cause: unknown;
+    }
   }
 }
