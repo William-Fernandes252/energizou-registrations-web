@@ -1,71 +1,64 @@
 import CompaniesTable from '@/components/CompaniesTable';
 import PageTitleBox from '@/components/PageTitleBox';
-import CompanyDetailsDialog from '@/components/CompanyDetailsDialog';
-import { useCompanies, useCompany } from '@/models/company';
-import { Alert, Box, Grid, LinearProgress } from '@mui/material';
-import { useState } from 'react';
+import { Alert, Box, Grid } from '@mui/material';
+import { getCompanies } from '@/models/company';
+import {
+  useLoaderData,
+  useRouteError,
+  useSearchParams,
+} from 'react-router-dom';
+
+export async function companiesLoader({ request }: { request: Request }) {
+  const url = new URL(request.url);
+  const page = url.searchParams.get('page') || 1;
+  const limit = url.searchParams.get('limit') || 20;
+  const sort = (url.searchParams.get('sort') ||
+    'reason') as EnergizouRegistrations.RestAPI.CompanySortableField;
+  const order = url.searchParams.get('order') as 'ASC' | 'DESC';
+  return await getCompanies(Number(page), Number(limit), { sort, order });
+}
 
 export default function CompaniesPage() {
-  const [params] = useState<{
+  const [searchParams, setSearchParams] = useSearchParams({
+    sort: 'reason',
+    order: 'ASC',
+  } as {
     sort: keyof Pick<
       EnergizouRegistrations.Models.Company,
       'reason' | 'created'
     >;
     order: 'ASC' | 'DESC';
-  }>({ sort: 'reason', order: 'ASC' });
-  const [selected, setSelected] =
-    useState<EnergizouRegistrations.Models.Company | null>(null);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 1,
-    pageSize: 20,
   });
-  const {
-    data: products,
-    isLoading,
-    create,
-    error,
-  } = useCompanies(paginationModel.page, paginationModel.pageSize, params);
-  const { delete: deleteCompany } = useCompany();
+  const data = useLoaderData() as Awaited<ReturnType<typeof companiesLoader>>;
+  const error: unknown | null = useRouteError();
+
+  const paginationModel = {
+    page: Number(searchParams.get('page') || 1),
+    pageSize: Number(searchParams.get('limit') || 20),
+  };
 
   function handlePaginationModelChange(newPaginationModel: {
     page: number;
     pageSize: number;
   }) {
-    if (
-      newPaginationModel.page !== paginationModel.page &&
-      newPaginationModel.page > 0
-    ) {
-      setPaginationModel(newPaginationModel);
-    }
-  }
-
-  function handleClose() {
-    setSelected(null);
+    setSearchParams({
+      page: newPaginationModel.page.toString(),
+      limit: newPaginationModel.pageSize.toString(),
+      sort: searchParams.get('sort') || 'reason',
+      order: searchParams.get('order') || 'ASC',
+    });
   }
 
   let content: JSX.Element;
-  if (error) {
-    content = (
-      <Alert severity="error">
-        {error?.response
-          ? error.response.data.detail
-          : 'An error occurred during the fetch.'}
-      </Alert>
-    );
+  if (error instanceof Error) {
+    content = <Alert severity="error">{error.message}</Alert>;
   } else {
-    content = isLoading ? (
-      <LinearProgress />
-    ) : (
+    content = (
       <CompaniesTable
-        companies={products.results}
-        isLoading={isLoading}
-        onCreate={create}
+        companies={data.items}
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
-        count={products.count}
-        onSelected={company => {
-          setSelected(company);
-        }}
+        totalCompaniesCount={data.meta.totalItems}
       />
     );
   }
@@ -80,11 +73,6 @@ export default function CompaniesPage() {
           </Grid>
         </Grid>
       </Box>
-      <CompanyDetailsDialog
-        onClose={handleClose}
-        company={selected}
-        onDelete={deleteCompany}
-      />
     </>
   );
 }
