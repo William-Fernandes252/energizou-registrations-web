@@ -1,17 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import { RouterProvider } from 'react-router-dom';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './providers/auth';
 import { QueryClientProvider } from 'react-query';
 import { queryClient } from './query-client';
-
-import { router } from '@/routes';
+import { axiosInstance } from './axios';
+import { createRoutes } from '@/routes';
 import { createTheme, ThemeProvider } from '@mui/material';
 
 const theme = createTheme({
@@ -33,7 +32,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
+          <RouterProvider
+            router={createBrowserRouter(createRoutes(axiosInstance))}
+          />
         </QueryClientProvider>
       </AuthProvider>
     </ThemeProvider>

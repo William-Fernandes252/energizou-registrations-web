@@ -1,4 +1,4 @@
-import type { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
 abstract class BaseError
   extends Error
@@ -7,10 +7,7 @@ abstract class BaseError
   cause: unknown;
   action: string;
 
-  constructor(
-    protected readonly axiosError: AxiosError,
-    options: EnergizouRegistrations.Errors.ErrorOptions,
-  ) {
+  constructor(options: EnergizouRegistrations.Errors.ErrorOptions) {
     super(options.message);
     this.cause = options.cause;
     this.action = options.action;
@@ -18,21 +15,87 @@ abstract class BaseError
 }
 
 export class ValidationError extends BaseError {
-  constructor(axiosError: AxiosError) {
-    super(axiosError, {
+  constructor(
+    cause?: unknown,
+    readonly fieldErrors?: string[],
+  ) {
+    super({
       message: 'Ocorreu um erro de validação.',
       action: 'Corrija os erros e tente novamente.',
-      cause: axiosError.response?.data,
+      cause,
     });
   }
 }
 
 export class ServerError extends BaseError {
-  constructor(axiosError: AxiosError) {
-    super(axiosError, {
+  constructor(cause?: unknown) {
+    super({
       message: 'Ocorreu um erro no servidor.',
       action: 'Tente novamente mais tarde.',
-      cause: axiosError.response?.data,
+      cause,
     });
+  }
+}
+
+export class UnauthorizedError extends BaseError {
+  constructor(cause?: unknown) {
+    super({
+      message: 'Acesso negado.',
+      action: 'Verifique suas credenciais e tente novamente.',
+      cause,
+    });
+  }
+}
+
+export class SessionExpiredError extends BaseError {
+  constructor(cause?: unknown) {
+    super({
+      message: 'Sessão expirada.',
+      action: 'Verifique suas credenciais e tente novamente.',
+      cause,
+    });
+  }
+}
+
+export class ForbiddenError extends BaseError {
+  constructor(cause?: unknown) {
+    super({
+      message: 'Acesso negado.',
+      action: 'Você não tem permissão para realizar esta ação.',
+      cause,
+    });
+  }
+}
+
+export class NetworkError extends BaseError {
+  constructor(cause?: unknown) {
+    super({
+      message: 'Ocorreu um erro durante a comunicação com o servidor.',
+      action: 'Verifique sua conexão e tente novamente.',
+      cause,
+    });
+  }
+}
+
+export class ErrorFactory {
+  static createFromAxiosError(axiosError: AxiosError): BaseError {
+    if (axiosError.response) {
+      switch (axiosError.response.status) {
+        case 400:
+        case 422:
+          return new ValidationError(
+            axiosError,
+            (axiosError.response?.data as { errors: string[] })
+              .errors as string[],
+          );
+        case 401:
+          return new UnauthorizedError(axiosError);
+        case 403:
+          return new ForbiddenError(axiosError);
+        case 500:
+          return new ServerError(axiosError);
+      }
+    }
+    return new NetworkError(axiosError);
   }
 }

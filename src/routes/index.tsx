@@ -1,11 +1,13 @@
 import IndexPage from '@/pages/IndexPage';
-import CompanyListPage from '@/pages/CompanyListPage';
+import CompanyListPage, { getCompaniesLoader } from '@/pages/CompanyListPage';
 import Root from '@/pages';
-import { createBrowserRouter, type RouteObject } from 'react-router-dom';
+import type { RouteObject } from 'react-router-dom';
 import LoginPage from '@/pages/LoginPage';
 import RegistrationPage from '@/pages/RegistrationPage/RegistrationPage';
+import type { AxiosInstance } from 'axios';
 
-const routes: RouteObject[] = [
+export function createRoutes(axios: AxiosInstance): RouteObject[] {
+  return [
   {
     path: '/',
     element: <Root />,
@@ -31,5 +33,4 @@ const routes: RouteObject[] = [
     ],
   },
 ];
-
-export const router = createBrowserRouter(routes);
+}
