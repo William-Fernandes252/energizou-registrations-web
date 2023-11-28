@@ -1,31 +1,28 @@
 import { useAuth } from '@/contexts/auth';
 import { UnauthorizedError } from '@/errors';
 import type { ComponentType } from 'react';
-import { Navigate, redirect } from 'react-router-dom';
+import {
+  ActionFunction,
+  ActionFunctionArgs,
+  LoaderFunction,
+  LoaderFunctionArgs,
+  Navigate,
+  redirect,
+} from 'react-router-dom';
 
-export type Operation = ({
-  request,
-  params,
-}: {
-  request: Request;
-  params?: Record<string, string>;
-}) => Promise<unknown>;
-
-export function redirectToLoginOnUnauthorized(operation: Operation) {
-  return async function ({
-    request,
-    params,
-  }: {
-    request: Request;
-    params?: Record<string, string>;
-  }) {
+export function redirectToLoginOnUnauthorized<T>(
+  operation: LoaderFunction<T> | ActionFunction<T>,
+) {
+  return async function (
+    context: ActionFunctionArgs<T> | LoaderFunctionArgs<T>,
+  ) {
     try {
-      return await operation({ request, params });
+      return await operation(context);
     } catch (error) {
       if (error instanceof UnauthorizedError) {
-        throw error;
+        return redirect('/login');
       } else {
-        redirect('/login');
+        throw error;
       }
     }
   };
