@@ -78,6 +78,7 @@ export default function CompaniesTable({
             }}
             autoHeight
             getRowId={row => row.cnpj}
+            rowCount={count}
           />
         </Box>
       </Paper>
