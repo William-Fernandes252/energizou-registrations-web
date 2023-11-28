@@ -54,39 +54,30 @@ namespace EnergizouRegistrations {
       detail: string;
     };
 
-    type ValidationError<T extends Resource> = {
-      errors: string[];
-      message: string;
-    };
-
     type ListResponseData<T extends Resource> = T extends Models.PaginatedModel
       ? ResponsePaginatedData[T]
       : T[];
 
     type ResponseData<T extends Resource> = T;
 
-    type RegisterCompanyForm = Omit<Models.Company, 'users' | 'address'> & {
-      password: string;
-    } & Omit<User, 'id'> &
-      Address;
-
-    type UseModelOptions = {
-      onError?: (error: unknown) => void;
-      onSuccess?: (data: unknown) => void;
+    type PaginationParams = {
+      page?: number;
+      limit?: number;
     };
 
-    type CompanyFilterableField = keyof Pick<
-      Models.Company,
-      'reason' | 'cnpj' | 'created'
-    >;
-    type CompanySortableField = keyof Pick<
-      Models.Company,
-      'reason' | 'created'
-    >;
+    type SortParams<K> = {
+      sort?: K;
+      order?: 'ASC' | 'DESC';
+    };
   }
 
   namespace Errors {
-    type ErrorOptions = { message: string; action: string; cause?: unknown };
+    type ErrorOptions = {
+      message: string;
+      action: string;
+      cause?: unknown;
+      axiosError?: AxiosError;
+    };
     interface Error {
       readonly message: string;
       readonly action: string;

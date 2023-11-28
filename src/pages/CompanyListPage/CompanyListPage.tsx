@@ -12,29 +12,13 @@ import type { AxiosInstance } from 'axios';
 export function getCompaniesLoader(axiosInstance: AxiosInstance) {
   return async function ({ request }: { request: Request }) {
     const url = new URL(request.url);
-    const page = url.searchParams.get('page') || 1;
-    const limit = url.searchParams.get('limit') || 20;
-    const sort = (url.searchParams.get('sort') ||
-      'reason') as EnergizouRegistrations.RestAPI.CompanySortableField;
-    const order = url.searchParams.get('order') as 'ASC' | 'DESC';
-    return await getCompanies(axiosInstance, Number(page), Number(limit), {
-      sort,
-      order,
-    });
+    const params = Object.fromEntries(url.searchParams);
+    return await getCompanies(axiosInstance, params);
   };
 }
 
 export default function CompanyListPage() {
-  const [searchParams, setSearchParams] = useSearchParams({
-    sort: 'reason',
-    order: 'ASC',
-  } as {
-    sort: keyof Pick<
-      EnergizouRegistrations.Models.Company,
-      'reason' | 'created'
-    >;
-    order: 'ASC' | 'DESC';
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
   const data = useLoaderData() as Awaited<
     ReturnType<ReturnType<typeof getCompaniesLoader>>
   >;
@@ -49,6 +33,9 @@ export default function CompanyListPage() {
     page: number;
     pageSize: number;
   }) {
+    if (newPaginationModel.page < 1) {
+      newPaginationModel.page = 1;
+    }
     setSearchParams({
       page: newPaginationModel.page.toString(),
       limit: newPaginationModel.pageSize.toString(),

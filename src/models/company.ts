@@ -1,31 +1,40 @@
-import { ServerError, ValidationError } from '@/errors';
+import { ErrorFactory } from '@/errors';
 import { AxiosError, type AxiosInstance } from 'axios';
 
-const resourceUri = '/companies/';
+const resourceUri = '/companies';
 
 export type ListResponse =
   EnergizouRegistrations.RestAPI.ResponsePaginatedData<EnergizouRegistrations.Models.CompanyPreview>;
+
+export type CompanyRegistrationPayload = Omit<
+  EnergizouRegistrations.Models.Company,
+  'users' | 'address'
+> & {
+  password: string;
+} & Omit<EnergizouRegistrations.Models.User, 'id'> &
+  EnergizouRegistrations.Models.Address;
+
+export type SortableField = keyof Pick<
+  EnergizouRegistrations.Models.Company,
+  'reason' | 'created'
+>;
+
+export type ListParams = EnergizouRegistrations.RestAPI.PaginationParams &
+  EnergizouRegistrations.RestAPI.SortParams<SortableField>;
 
 /**
  * @throws `ServerError` when `response.status` is not 200
  */
 export async function getCompanies(
   axiosInstance: AxiosInstance,
-  page: number,
-  limit: number,
-  params?: {
-    sort?: EnergizouRegistrations.RestAPI.CompanySortableField;
-    order?: 'ASC' | 'DESC';
-  },
+  params?: ListParams,
 ): Promise<ListResponse> {
   try {
-    const { data } = await axiosInstance.get(resourceUri, {
-      params: { page, limit, ...params },
-    });
+    const { data } = await axiosInstance.get(resourceUri, { params });
     return data;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
-      throw new ServerError(error);
+      throw ErrorFactory.createFromAxiosError(error);
     } else {
       throw error;
     }
@@ -37,18 +46,14 @@ export async function getCompanies(
  */
 export async function registerCompany(
   axiosInstance: AxiosInstance,
-  company: EnergizouRegistrations.RestAPI.RegisterCompanyForm,
+  company: CompanyRegistrationPayload,
 ): Promise<EnergizouRegistrations.Models.Company> {
   try {
     const { data } = await axiosInstance.post(resourceUri, company);
     return data;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
-      if ([400, 422].includes(error.response.status)) {
-        throw new ValidationError(error);
-      } else {
-        throw new ServerError(error);
-      }
+      throw ErrorFactory.createFromAxiosError(error);
     } else {
       throw error;
     }
