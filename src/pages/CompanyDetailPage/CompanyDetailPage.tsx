@@ -40,9 +40,6 @@ export default function CompanyDetailPage() {
   const company = useLoaderData() as Awaited<
     ReturnType<ReturnType<typeof getCompanyDetailLoader>>
   >;
-
-  console.log(company);
-
   return (
     <Card>
       <CardContent>
