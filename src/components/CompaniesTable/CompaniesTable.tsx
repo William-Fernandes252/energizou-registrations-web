@@ -1,6 +1,7 @@
 import { Box, Paper } from '@mui/material';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
+import { cnpj } from 'cpf-cnpj-validator';
 
 type Props = {
   companies: EnergizouRegistrations.Models.CompanyPreview[];
@@ -24,12 +25,19 @@ export default function CompaniesTable({
     ...companies,
   ] as Partial<EnergizouRegistrations.Models.CompanyPreview>[];
   const columns: GridColDef[] = [
-    { field: 'cnpj', headerName: 'CNPJ', flex: 1 },
+    {
+      field: 'cnpj',
+      headerName: 'CNPJ',
+      flex: 1,
+      valueFormatter: ({ value }) => cnpj.format(value),
+    },
     { field: 'reason', headerName: 'Razão Social', flex: 1 },
     {
       field: 'phone',
       headerName: 'Telefone',
       flex: 1,
+      valueFormatter: ({ value }) =>
+        value.replace(/(\d{1,2})(\d{4})(\d{4})/, '+55 ($1) $2-$3'),
     },
     { field: 'representative', headerName: 'Representante', flex: 1 },
   ];

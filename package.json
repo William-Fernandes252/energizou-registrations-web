@@ -19,6 +19,7 @@
     "@mui/x-data-grid": "^6.16.3",
     "@mui/x-data-grid-generator": "^6.16.3",
     "axios": "^1.5.1",
+    "cpf-cnpj-validator": "^1.0.3",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
