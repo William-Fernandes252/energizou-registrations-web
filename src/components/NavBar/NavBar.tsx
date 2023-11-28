@@ -47,7 +47,7 @@ export default function NavBar() {
 
   function handleLogout() {
     setMenuAnchorEl(null);
-    logout();
+    logout(true);
   }
 
   return (

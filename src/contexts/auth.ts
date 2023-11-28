@@ -1,11 +1,9 @@
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { createContext, useContext } from 'react';
 import { axiosInstance as axios } from '@/axios';
 import { jwtDecode } from 'jwt-decode';
 import { AxiosError } from 'axios';
 import { ErrorFactory, SessionExpiredError } from '@/errors';
 import { useNavigate } from 'react-router-dom';
-
-const CHECK_EXPIRATION_INTERVAL = 5 * 60 * 1000;
 
 export const UserContext =
   createContext<EnergizouRegistrations.LoggedUser | null>(null);
@@ -27,18 +25,17 @@ export function useAuth(): {
     email: EnergizouRegistrations.LoggedUser['email'],
     password: string,
   ) => Promise<void>;
-  logout: () => void;
+  logout: (redirect?: boolean) => void;
   isAuthenticated: boolean;
 } {
   const user = useContext(UserContext);
   const setUser = useContext(UserSetterContext)!;
-  const checkTokenExpirationIntervalId = useRef<number | null>(null);
   const navigate = useNavigate();
 
   async function login(
     email: EnergizouRegistrations.LoggedUser['email'],
     password: string,
-  ) {
+  ): Promise<void> {
     try {
       const response = await axios.post('/auth/login', {
         email,
@@ -61,31 +58,13 @@ export function useAuth(): {
     }
   }
 
-  function logout() {
+  function logout(redirect: boolean = false): void {
     localStorage.removeItem('user');
     setUser(null);
-    navigate('/login');
-  }
-
-  useEffect(() => {
-    if (user) {
-      checkTokenExpirationIntervalId.current = window.setInterval(() => {
-        const storedToken = getJWT();
-        if (!storedToken) {
-          return;
-        }
-        const decoded = jwtDecode(storedToken);
-        if (decoded.exp! < Date.now() / 1000) {
-          logout();
-        }
-      }, CHECK_EXPIRATION_INTERVAL);
+    if (redirect) {
+      return navigate('/login');
     }
-    return () => {
-      if (checkTokenExpirationIntervalId.current) {
-        clearInterval(checkTokenExpirationIntervalId.current);
-      }
-    };
-  }, [user]);
+  }
 
   const isAuthenticated = !!user;
 

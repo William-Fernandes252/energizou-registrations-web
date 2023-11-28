@@ -5,13 +5,14 @@ import type { RouteObject } from 'react-router-dom';
 import LoginPage from '@/pages/LoginPage';
 import RegistrationPage from '@/pages/RegistrationPage/RegistrationPage';
 import type { AxiosInstance } from 'axios';
-import { redirectToLoginOnUnauthorized } from './utils';
+import ErrorPage from '@/pages/ErrorPage';
 
 export function createRoutes(axios: AxiosInstance): RouteObject[] {
   return [
     {
       path: '/',
       element: <Root />,
+      errorElement: import.meta.env.DEV ? undefined : <ErrorPage />,
       children: [
         {
           index: true,
@@ -19,7 +20,7 @@ export function createRoutes(axios: AxiosInstance): RouteObject[] {
         },
         {
           path: 'companies',
-          loader: redirectToLoginOnUnauthorized(getCompaniesLoader(axios)),
+          loader: getCompaniesLoader(axios),
           element: <CompanyListPage />,
           children: [
             {

@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 
-abstract class BaseError
+export abstract class BaseError
   extends Error
   implements EnergizouRegistrations.Errors.Error
 {
