@@ -6,6 +6,9 @@ import LoginPage from '@/pages/LoginPage';
 import RegistrationPage from '@/pages/RegistrationPage/RegistrationPage';
 import type { AxiosInstance } from 'axios';
 import ErrorPage from '@/pages/ErrorPage';
+import CompanyDetailPage, {
+  getCompanyDetailLoader,
+} from '@/pages/CompanyDetailPage';
 
 export function createRoutes(axios: AxiosInstance): RouteObject[] {
   return [
@@ -26,6 +29,11 @@ export function createRoutes(axios: AxiosInstance): RouteObject[] {
             {
               path: 'new',
               element: <RegistrationPage />,
+            },
+            {
+              path: ':cnpj',
+              loader: getCompanyDetailLoader(axios),
+              element: <CompanyDetailPage />,
             },
           ],
         },

@@ -4,6 +4,7 @@ import { Alert, Box, Grid } from '@mui/material';
 import { getCompanies } from '@/models/company';
 import {
   useLoaderData,
+  useOutlet,
   useRouteError,
   useSearchParams,
 } from 'react-router-dom';
@@ -23,6 +24,7 @@ export default function CompanyListPage() {
     ReturnType<ReturnType<typeof getCompaniesLoader>>
   >;
   const error: unknown | null = useRouteError();
+  const outlet = useOutlet();
 
   const paginationModel = {
     page: Number(searchParams.get('page') || 1),
@@ -63,9 +65,14 @@ export default function CompanyListPage() {
       <PageTitleBox title="Clientes" />
       <Box>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={outlet ? 8 : 12}>
             {content}
           </Grid>
+          {outlet && (
+            <Grid item xs={4}>
+              {outlet}
+            </Grid>
+          )}
         </Grid>
       </Box>
     </>

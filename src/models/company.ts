@@ -41,6 +41,22 @@ export async function getCompanies(
   }
 }
 
+export async function getCompany(
+  axiosInstance: AxiosInstance,
+  cnpj: EnergizouRegistrations.Models.Company['cnpj'],
+): Promise<EnergizouRegistrations.Models.Company> {
+  try {
+    const { data } = await axiosInstance.get(`${resourceUri}/${cnpj}`);
+    return data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      throw ErrorFactory.createFromAxiosError(error);
+    } else {
+      throw error;
+    }
+  }
+}
+
 /**
  * @throws `AxiosError` when `response.status` is not 201
  */
