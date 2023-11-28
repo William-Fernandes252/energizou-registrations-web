@@ -14,6 +14,16 @@ export abstract class BaseError
   }
 }
 
+export class NotFoundError extends BaseError {
+  constructor(cause?: unknown) {
+    super({
+      message: 'O recurso solicitado não foi encontrado.',
+      action: 'Verifique a URL e tente novamente.',
+      cause,
+    });
+  }
+}
+
 export class ValidationError extends BaseError {
   constructor(
     cause?: unknown,
@@ -92,6 +102,8 @@ export class ErrorFactory {
           return new UnauthorizedError(axiosError);
         case 403:
           return new ForbiddenError(axiosError);
+        case 404:
+          return new NotFoundError(axiosError);
         case 500:
           return new ServerError(axiosError);
       }
