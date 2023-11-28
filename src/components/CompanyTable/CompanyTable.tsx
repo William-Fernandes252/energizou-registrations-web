@@ -13,7 +13,7 @@ type Props = {
   totalCompaniesCount: number;
 };
 
-export default function CompaniesTable({
+export default function CompanyTable({
   companies,
   paginationModel,
   onPaginationModelChange,

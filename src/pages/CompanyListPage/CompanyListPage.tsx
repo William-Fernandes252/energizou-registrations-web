@@ -1,4 +1,4 @@
-import CompaniesTable from '@/components/CompaniesTable';
+import CompanyTable from '@/components/CompanyTable';
 import PageTitleBox from '@/components/PageTitleBox';
 import { Alert, Box, Grid } from '@mui/material';
 import { getCompanies } from '@/models/company';
@@ -51,7 +51,7 @@ export default function CompanyListPage() {
     content = <Alert severity="error">{error.message}</Alert>;
   } else {
     content = (
-      <CompaniesTable
+      <CompanyTable
         companies={data.items}
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
