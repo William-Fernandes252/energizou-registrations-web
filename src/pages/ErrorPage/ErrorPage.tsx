@@ -26,24 +26,36 @@ export default function ErrorPage() {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Box sx={{ p: 3 }}>
-          <Typography
-            variant="h2"
-            color="error"
-            sx={{ textAlign: 'center', mb: 2 }}>
-            Erro <SickIcon fontSize="large" />
-          </Typography>
-          {error instanceof Error && (
-            <Typography variant="body1" sx={{ textAlign: 'center' }}>
-              {(error as Error).message}
+        <Grid
+          container
+          sx={{ p: 3 }}
+          spacing={1}
+          direction="column"
+          alignContent="center"
+          alignItems="center">
+          <Grid item>
+            <Typography
+              variant="h2"
+              color="error"
+              sx={{ textAlign: 'center', mb: 2 }}>
+              Erro <SickIcon fontSize="large" />
             </Typography>
+          </Grid>
+          {error instanceof Error && (
+            <Grid item>
+              <Typography variant="body1" sx={{ textAlign: 'center' }}>
+                {(error as Error).message}
+              </Typography>
+            </Grid>
           )}
           {error instanceof BaseError && (
-            <Typography variant="caption" sx={{ textAlign: 'center' }}>
-              {error.action}
-            </Typography>
+            <Grid item>
+              <Typography variant="caption" sx={{ textAlign: 'center' }}>
+                {error.action}
+              </Typography>
+            </Grid>
           )}
-        </Box>
+        </Grid>
       </Grid>
     </Grid>
   );
