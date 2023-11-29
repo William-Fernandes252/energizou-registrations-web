@@ -15,7 +15,7 @@ export function createRoutes(axios: AxiosInstance): RouteObject[] {
     {
       path: '/',
       element: <Root />,
-      errorElement: import.meta.env.DEV ? undefined : <ErrorPage />,
+      errorElement: <ErrorPage />,
       children: [
         {
           index: true,

@@ -8,6 +8,10 @@ export default function ErrorPage() {
   const error = useRouteError();
   const { logout } = useAuth();
 
+  if (import.meta.env.DEV) {
+    console.error(error);
+  }
+
   if (error instanceof UnauthorizedError) {
     logout(true);
   }
