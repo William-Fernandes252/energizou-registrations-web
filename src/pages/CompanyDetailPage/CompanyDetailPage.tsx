@@ -1,5 +1,6 @@
 import { ValidationError } from '@/errors';
 import { getCompany } from '@/models/company';
+import { formatCnpj, formatPhone as formatPhoneNumber } from '@/utils/format';
 import { Business, Person } from '@mui/icons-material';
 import {
   Box,
@@ -54,11 +55,15 @@ export default function CompanyDetailPage() {
           <Grid container spacing={1}>
             <Grid item xs={6}>
               <Typography variant="body1">CNPJ</Typography>
-              <Typography variant="body2">{company.cnpj}</Typography>
+              <Typography variant="body2">
+                {formatCnpj(company.cnpj)}
+              </Typography>
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1">Telefone</Typography>
-              <Typography variant="body2">{company.phone}</Typography>
+              <Typography variant="body2">
+                {formatPhoneNumber(company.phone)}
+              </Typography>
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1">Endereço</Typography>

@@ -1,7 +1,4 @@
-import { Box, Paper } from '@mui/material';
-import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { useNavigate } from 'react-router-dom';
-import { cnpj } from 'cpf-cnpj-validator';
+import { formatCnpj, formatPhone } from '@/utils/format';
 
 type Props = {
   companies: EnergizouRegistrations.Models.CompanyPreview[];
@@ -29,7 +26,7 @@ export default function CompanyTable({
       field: 'cnpj',
       headerName: 'CNPJ',
       flex: 1,
-      valueFormatter: ({ value }) => cnpj.format(value),
+      valueFormatter: ({ value }) => formatCnpj(value),
     },
     { field: 'reason', headerName: 'Razão Social', flex: 1 },
     {
@@ -37,7 +34,7 @@ export default function CompanyTable({
       headerName: 'Telefone',
       flex: 1,
       valueFormatter: ({ value }) =>
-        value.replace(/(\d{1,2})(\d{4})(\d{4})/, '+55 ($1) $2-$3'),
+        formatPhoneNumber(value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')),
     },
     { field: 'representative', headerName: 'Representante', flex: 1 },
   ];
