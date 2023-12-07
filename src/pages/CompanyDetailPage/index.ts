@@ -1,4 +1,4 @@
-import { withAuthGuard } from '@/routes/utils';
+import { withAuthGuard } from '@/utils/auth';
 import CompanyDetailPage from './CompanyDetailPage';
 
 export default withAuthGuard(CompanyDetailPage, '/login');
