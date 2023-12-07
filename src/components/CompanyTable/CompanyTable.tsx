@@ -10,6 +10,19 @@ type Props = {
   totalCompaniesCount: number;
 };
 
+function Toolbar() {
+  const apiRef = useGridApiContext();
+  return (
+    <GridToolbarContainer>
+      <Button
+        onClick={() => apiRef.current.exportDataAsCsv({ fileName: 'clientes' })}
+        startIcon={<FileDownload />}>
+        Exportar
+      </Button>
+    </GridToolbarContainer>
+  );
+}
+
 export default function CompanyTable({
   companies,
   paginationModel,
@@ -76,6 +89,9 @@ export default function CompanyTable({
             autoHeight
             getRowId={row => row.cnpj}
             rowCount={count}
+            slots={{
+              toolbar: Toolbar,
+            }}
           />
         </Box>
       </Paper>
