@@ -1,6 +1,6 @@
 import { ValidationError } from '@/errors';
 import { getCompany } from '@/models/company';
-import { formatCnpj, formatPhone as formatPhoneNumber } from '@/utils/format';
+import { formatCnpj, formatPhoneNumber } from '@/utils/format';
 import { Business, Person } from '@mui/icons-material';
 import {
   Box,
