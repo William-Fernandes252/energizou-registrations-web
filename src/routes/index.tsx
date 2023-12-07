@@ -1,10 +1,11 @@
+import type { RouteObject } from 'react-router-dom';
+import type { AxiosInstance } from 'axios';
 import IndexPage from '@/pages/IndexPage';
 import CompanyListPage, { getCompaniesLoader } from '@/pages/CompanyListPage';
 import Root from '@/pages';
-import type { RouteObject } from 'react-router-dom';
 import LoginPage from '@/pages/LoginPage';
-import RegistrationPage from '@/pages/RegistrationPage/RegistrationPage';
-import type { AxiosInstance } from 'axios';
+import CompanyRegistrationPage from '@/pages/CompanyRegistrationPage';
+import { getRegisterCompanyAction } from '@/pages/CompanyRegistrationPage/CompanyRegistrationPage';
 import ErrorPage from '@/pages/ErrorPage';
 import CompanyDetailPage, {
   getCompanyDetailLoader,
@@ -28,7 +29,8 @@ export function createRoutes(axios: AxiosInstance): RouteObject[] {
           children: [
             {
               path: 'new',
-              element: <RegistrationPage />,
+              element: <CompanyRegistrationPage />,
+              action: getRegisterCompanyAction(axios),
             },
             {
               path: ':cnpj',

@@ -8,11 +8,13 @@ export type ListResponse =
 
 export type CompanyRegistrationPayload = Omit<
   EnergizouRegistrations.Models.Company,
-  'users' | 'address'
+  'users' | 'address' | 'created' | 'updated' | 'representative'
 > & {
-  password: string;
-} & Omit<EnergizouRegistrations.Models.User, 'id'> &
-  EnergizouRegistrations.Models.Address;
+  representative: Omit<EnergizouRegistrations.Models.User, 'id' | 'company'> & {
+    password: string;
+  };
+  address: EnergizouRegistrations.Models.Address;
+};
 
 export type SortableField = keyof Pick<
   EnergizouRegistrations.Models.Company,
@@ -65,7 +67,10 @@ export async function registerCompany(
   company: CompanyRegistrationPayload,
 ): Promise<EnergizouRegistrations.Models.Company> {
   try {
-    const { data } = await axiosInstance.post(resourceUri, company);
+    const { data } = await axiosInstance.post(
+      `${resourceUri}/register`,
+      company,
+    );
     return data;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {

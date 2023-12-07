@@ -1,4 +1,13 @@
-import { formatCnpj, formatPhone } from '@/utils/format';
+import { Box, Button, Paper } from '@mui/material';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  type GridColDef,
+  useGridApiContext,
+} from '@mui/x-data-grid';
+import { Link, useNavigate } from 'react-router-dom';
+import { Add, FileDownload } from '@mui/icons-material';
+import { formatCnpj, formatPhoneNumber } from '@/utils/format';
 
 type Props = {
   companies: EnergizouRegistrations.Models.CompanyPreview[];
@@ -14,6 +23,13 @@ function Toolbar() {
   const apiRef = useGridApiContext();
   return (
     <GridToolbarContainer>
+      <Button
+        color="primary"
+        startIcon={<Add />}
+        component={Link}
+        to="/companies/new">
+        Cadastrar cliente
+      </Button>
       <Button
         onClick={() => apiRef.current.exportDataAsCsv({ fileName: 'clientes' })}
         startIcon={<FileDownload />}>
