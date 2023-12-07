@@ -25,6 +25,13 @@ const theme = createTheme({
       main: '#1E9E79',
     },
   },
+  components: {
+    MuiAlert: {
+      defaultProps: {
+        variant: 'outlined',
+      },
+    },
+  },
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
