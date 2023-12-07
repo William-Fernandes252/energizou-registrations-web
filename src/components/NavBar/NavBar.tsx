@@ -33,7 +33,6 @@ export default function NavBar() {
   }
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log(event.currentTarget);
     setMenuAnchorEl(event.currentTarget);
   }
 
