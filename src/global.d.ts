@@ -51,7 +51,9 @@ namespace EnergizouRegistrations {
     };
 
     type ErrorResponseData = {
-      detail: string;
+      message: string | Record<string, string>;
+      error: string;
+      statusCode: import('axios').AxiosResponse['status'];
     };
 
     type ListResponseData<T extends Resource> = T extends Models.PaginatedModel

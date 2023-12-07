@@ -27,7 +27,7 @@ export class NotFoundError extends BaseError {
 export class ValidationError extends BaseError {
   constructor(
     cause?: unknown,
-    readonly fieldErrors?: string[],
+    readonly fieldErrors?: Record<string, string>,
   ) {
     super({
       message: 'Ocorreu um erro de validação.',
@@ -88,15 +88,16 @@ export class NetworkError extends BaseError {
 }
 
 export class ErrorFactory {
-  static createFromAxiosError(axiosError: AxiosError): BaseError {
+  static createFromAxiosError(
+    axiosError: AxiosError<EnergizouRegistrations.RestAPI.ErrorResponseData>,
+  ): BaseError {
     if (axiosError.response) {
       switch (axiosError.response.status) {
         case 400:
         case 422:
           return new ValidationError(
             axiosError,
-            (axiosError.response?.data as { errors: string[] })
-              .errors as string[],
+            axiosError.response.data.message as Record<string, string>,
           );
         case 401:
           return new UnauthorizedError(axiosError);
