@@ -10,6 +10,7 @@ import ErrorPage from '@/pages/ErrorPage';
 import CompanyDetailPage, {
   getCompanyDetailLoader,
 } from '@/pages/CompanyDetailPage';
+import { getDeleteCompanyAction } from './DeleteCompany';
 
 export function createRoutes(axios: AxiosInstance): RouteObject[] {
   return [
@@ -33,9 +34,15 @@ export function createRoutes(axios: AxiosInstance): RouteObject[] {
               action: getRegisterCompanyAction(axios),
             },
             {
-              path: ':cnpj',
+              path: ':id',
               loader: getCompanyDetailLoader(axios),
               element: <CompanyDetailPage />,
+              children: [
+                {
+                  path: 'delete',
+                  action: getDeleteCompanyAction(axios),
+                },
+              ],
             },
           ],
         },

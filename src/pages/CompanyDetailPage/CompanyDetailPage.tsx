@@ -1,11 +1,18 @@
 import { ValidationError } from '@/errors';
 import { getCompany } from '@/models/company';
 import { formatCnpj, formatPhoneNumber } from '@/utils/format';
-import { Business, Person } from '@mui/icons-material';
+import { Business, Delete, Person } from '@mui/icons-material';
 import {
   Box,
+  Button,
   Card,
+  CardActions,
   CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Grid,
   List,
@@ -15,17 +22,14 @@ import {
   Typography,
 } from '@mui/material';
 import type { AxiosInstance } from 'axios';
-import type { PropsWithChildren } from 'react';
-import { useLoaderData, type LoaderFunctionArgs } from 'react-router-dom';
+import { useState, type PropsWithChildren } from 'react';
+import { useLoaderData, type LoaderFunctionArgs, Form } from 'react-router-dom';
 
 export function getCompanyDetailLoader(axiosInstance: AxiosInstance) {
   return async function ({
     params,
   }: LoaderFunctionArgs<{ params: { cnpj: string } }>) {
-    if (!params.cnpj) {
-      throw new ValidationError();
-    }
-    return await getCompany(axiosInstance, params.cnpj);
+    return await getCompany(axiosInstance, params.id!);
   };
 }
 
@@ -38,10 +42,21 @@ function Section({ children }: PropsWithChildren) {
 }
 
 export default function CompanyDetailPage() {
+  const [showConfirmDeleteDialog, setshowConfirmDeleteDialog] = useState(false);
   const company = useLoaderData() as Awaited<
     ReturnType<ReturnType<typeof getCompanyDetailLoader>>
   >;
+
+  function handleClickDelete() {
+    setshowConfirmDeleteDialog(true);
+  }
+
+  function handleClose() {
+    setshowConfirmDeleteDialog(false);
+  }
+
   return (
+    <>
     <Card>
       <CardContent>
         <Typography
@@ -79,7 +94,7 @@ export default function CompanyDetailPage() {
           <SectionTitle>Usuários</SectionTitle>
           <List dense disablePadding>
             {company.users.map(user => (
-              <ListItem>
+                <ListItem key={user.id}>
                 <ListItemIcon>
                   <Person />
                 </ListItemIcon>
@@ -89,6 +104,41 @@ export default function CompanyDetailPage() {
           </List>
         </Section>
       </CardContent>
+        <CardActions>
+          <Button
+            startIcon={<Delete />}
+            color="warning"
+            onClick={handleClickDelete}>
+            Deletar
+          </Button>
+          <Form
+            method="post"
+            action={`/companies/${company.id}/delete`}
+            id="delete-form"
+          />
+        </CardActions>
     </Card>
+      <Dialog open={showConfirmDeleteDialog}>
+        <DialogTitle>Deletar cliente</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza que deseja deletar o cliente?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            form="delete-form"
+            color="warning"
+            onClick={handleClose}
+            startIcon={<Delete />}>
+            Deletar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

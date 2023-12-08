@@ -5,6 +5,7 @@ namespace EnergizouRegistrations {
     interface PaginatedModel {}
 
     interface Company extends PaginatedModel {
+      id: string;
       reason: string;
       cnpj: string;
       phone: string;
@@ -27,7 +28,7 @@ namespace EnergizouRegistrations {
       cep: string;
     }
 
-    type CompanyPreview = Omit<Company, 'users' | 'address'>;
+    type CompanyPreview = Omit<Company, 'users' | 'address' | 'id'>;
   }
 
   namespace RestAPI {

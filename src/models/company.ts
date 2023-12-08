@@ -80,3 +80,19 @@ export async function registerCompany(
     }
   }
 }
+
+export async function deleteCompany(
+  axiosInstance: AxiosInstance,
+  id: EnergizouRegistrations.Models.Company['id'],
+) {
+  try {
+    await axiosInstance.delete(`${resourceUri}/${id}`);
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      console.log(error.response);
+      throw ErrorFactory.createFromAxiosError(error);
+    } else {
+      throw error;
+    }
+  }
+}
