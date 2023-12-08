@@ -29,6 +29,7 @@ import {
 import type { AxiosInstance } from 'axios';
 import { useState, type ElementType, type PropsWithChildren } from 'react';
 import {
+  type ActionFunctionArgs,
   Form,
   redirect,
   useActionData,
@@ -37,7 +38,7 @@ import {
 } from 'react-router-dom';
 
 export function getRegisterCompanyAction(axiosInstance: AxiosInstance) {
-  return async function ({ request }: { request: Request }) {
+  return async function ({ request }: ActionFunctionArgs) {
     try {
       await registerCompany(
         axiosInstance,
