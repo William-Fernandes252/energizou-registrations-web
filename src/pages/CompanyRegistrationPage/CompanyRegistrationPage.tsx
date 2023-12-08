@@ -3,6 +3,7 @@ import CNPJInput from '@/components/CNPJInput';
 import PhoneNumberInput from '@/components/PhoneNumberInput/PhoneNumberInput';
 import StreetNumberInput from '@/components/StreetNumberInput';
 import { ValidationError } from '@/errors';
+import useAddressByCEP from '@/hooks/useAddressByCEP';
 import {
   type CompanyRegistrationPayload,
   registerCompany,
@@ -27,7 +28,13 @@ import {
   Alert,
 } from '@mui/material';
 import type { AxiosInstance } from 'axios';
-import { useState, type ElementType, type PropsWithChildren } from 'react';
+import { AvailableProviders } from 'cep-promise';
+import {
+  useState,
+  type ElementType,
+  type PropsWithChildren,
+  useEffect,
+} from 'react';
 import {
   type ActionFunctionArgs,
   Form,
@@ -103,6 +110,20 @@ export default function CompanyRegistrationPage() {
   const errors = useActionData() as Awaited<
     ReturnType<ReturnType<typeof getRegisterCompanyAction>>
   >;
+  const { address, loading: fetchingCEP } = useAddressByCEP(
+    registrationForm.cep,
+    { providers: ['viacep', 'brasilapi'] as AvailableProviders[] },
+  );
+
+  useEffect(() => {
+    if (address) {
+      setRegistrationForm(prev => ({
+        ...prev,
+        street: address.street,
+        cep: address.cep,
+      }));
+    }
+  }, [address]);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -264,7 +285,8 @@ export default function CompanyRegistrationPage() {
                 label="Rua"
                 required
                 name="street"
-                disabled={submitting}
+                value={registrationForm.street}
+                disabled={submitting || fetchingCEP}
                 onChange={handleChange}
               />
             </Grid>
@@ -277,14 +299,14 @@ export default function CompanyRegistrationPage() {
                   inputComponent: StreetNumberInput as any,
                 }}
                 required
-                disabled={submitting}
+                disabled={submitting || fetchingCEP}
                 onChange={handleChange}
               />
             </Grid>
           </FormSectionGrid>
           <LoadingButton
             type="submit"
-            loading={navigation.state === 'submitting'}
+            loading={submitting}
             variant="contained"
             color="primary"
             fullWidth>
