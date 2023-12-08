@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 export default function RootPage() {
   return (
-    <Container maxWidth="xl" sx={{ height: '100vh' }}>
+    <Container maxWidth="xl">
       <NavBar />
       <Box component={'main'} sx={{ p: 3 }}>
         <Outlet />

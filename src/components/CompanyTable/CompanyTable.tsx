@@ -69,48 +69,46 @@ export default function CompanyTable({
   ];
 
   return (
-    <>
-      <Paper>
-        <Box
-          sx={{
-            '& .actions': {
-              color: 'text.secondary',
-            },
-            '& .textPrimary': {
-              color: 'text.primary',
-            },
-          }}>
-          <DataGrid
-            rows={rows as EnergizouRegistrations.Models.Company[]}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel,
-              },
-            }}
-            pageSizeOptions={[
-              { value: 20, label: '20' },
-              { value: 50, label: '50' },
-              { value: 100, label: '100' },
-              { value: count, label: 'All' },
-            ]}
-            onPaginationModelChange={onPaginationModelChange}
-            paginationMode="server"
-            editMode="row"
-            onRowSelectionModelChange={row => {
-              if (row.length > 0) {
-                navigate(`/companies/${row[0]}`);
-              }
-            }}
-            autoHeight
-            getRowId={row => row.cnpj}
-            rowCount={count}
-            slots={{
-              toolbar: Toolbar,
-            }}
-          />
-        </Box>
-      </Paper>
-    </>
+    <Box
+      sx={{
+        '& .actions': {
+          color: 'text.secondary',
+        },
+        '& .textPrimary': {
+          color: 'text.primary',
+        },
+        height: '512px',
+      }}
+      component={Paper}>
+      <DataGrid
+        rows={rows as EnergizouRegistrations.Models.Company[]}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel,
+          },
+        }}
+        pageSizeOptions={[
+          { value: 20, label: '20' },
+          { value: 50, label: '50' },
+          { value: 100, label: '100' },
+          { value: count, label: 'All' },
+        ]}
+        onPaginationModelChange={onPaginationModelChange}
+        paginationMode="server"
+        editMode="row"
+        onRowSelectionModelChange={row => {
+          if (row.length > 0) {
+            navigate(`/companies/${row[0]}`);
+          }
+        }}
+        getRowId={row => row.cnpj}
+        rowCount={count}
+        slots={{
+          toolbar: Toolbar,
+        }}
+        sx={{ height: '100%' }}
+      />
+    </Box>
   );
 }
