@@ -1,5 +1,12 @@
 import { useState, type FormEvent } from 'react';
-import { Card, CardContent, TextField, Grid, Alert } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  TextField,
+  Grid,
+  Alert,
+  CardMedia,
+} from '@mui/material';
 import { useAuth } from '@/contexts/auth';
 import { LoadingButton } from '@mui/lab';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +50,18 @@ export default function LoginPage() {
         justifyContent="center"
         alignItems="center"
         sx={{ height: '100%' }}>
-        <Card>
+        <Card sx={{ minWidth: 334 }} variant="outlined">
+          <CardMedia
+            image="/profile-placeholder.jpg"
+            sx={{
+              height: 200,
+              width: 200,
+              mx: 'auto',
+              my: 2,
+              borderRadius: '50%',
+            }}
+            title="Login"
+          />
           <CardContent>
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
