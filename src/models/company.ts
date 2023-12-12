@@ -1,5 +1,5 @@
-import { ErrorFactory } from '@/errors';
-import { AxiosError, type AxiosInstance } from 'axios';
+import type { AxiosInstance } from 'axios';
+import { handleApiCallError } from './_utils';
 
 const resourceUri = '/companies';
 
@@ -39,11 +39,7 @@ export async function getCompanies(
     const { data } = await axiosInstance.get(resourceUri, { params });
     return data;
   } catch (error) {
-    if (error instanceof AxiosError && error.response) {
-      throw ErrorFactory.createFromAxiosError(error);
-    } else {
-      throw error;
-    }
+    throw handleApiCallError(error);
   }
 }
 
@@ -55,11 +51,7 @@ export async function getCompany(
     const { data } = await axiosInstance.get(`${resourceUri}/${cnpj}`);
     return data;
   } catch (error) {
-    if (error instanceof AxiosError && error.response) {
-      throw ErrorFactory.createFromAxiosError(error);
-    } else {
-      throw error;
-    }
+    throw handleApiCallError(error);
   }
 }
 
@@ -68,35 +60,28 @@ export async function getCompany(
  */
 export async function registerCompany(
   axiosInstance: AxiosInstance,
-  company: CompanyMutationPayload,
+  payload: CompanyMutationPayload,
 ): Promise<EnergizouRegistrations.Models.Company> {
   try {
     const { data } = await axiosInstance.post(
       `${resourceUri}/register`,
-      company,
+      payload,
     );
     return data;
   } catch (error) {
-    if (error instanceof AxiosError && error.response) {
-      throw ErrorFactory.createFromAxiosError(error);
-    } else {
-      throw error;
-    }
+    throw handleApiCallError(error);
+  }
+}
   }
 }
 
 export async function deleteCompany(
   axiosInstance: AxiosInstance,
   id: EnergizouRegistrations.Models.Company['id'],
-) {
+): Promise<void> {
   try {
     await axiosInstance.delete(`${resourceUri}/${id}`);
   } catch (error) {
-    if (error instanceof AxiosError && error.response) {
-      console.log(error.response);
-      throw ErrorFactory.createFromAxiosError(error);
-    } else {
-      throw error;
-    }
+    throw handleApiCallError(error);
   }
 }
