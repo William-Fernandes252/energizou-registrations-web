@@ -4,23 +4,27 @@ import {
   GridToolbarContainer,
   type GridColDef,
   useGridApiContext,
+  GridToolbarQuickFilter,
 } from '@mui/x-data-grid';
 import { Link, useNavigate } from 'react-router-dom';
 import { Add, FileDownload } from '@mui/icons-material';
 import { formatCnpj, formatPhoneNumber } from '@/utils/format';
+import type { KeyboardEvent } from 'react';
 
-type Props = {
-  companies: EnergizouRegistrations.Models.CompanyPreview[];
-  paginationModel: { page: number; pageSize: number };
-  onPaginationModelChange: (newPaginationModel: {
-    page: number;
-    pageSize: number;
-  }) => void;
-  totalCompaniesCount: number;
+type ToolBarProps = {
+  onSearch: (search: string) => void;
 };
 
-function Toolbar() {
+function Toolbar({ onSearch }: ToolBarProps) {
   const apiRef = useGridApiContext();
+
+  function handleSearchKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      onSearch((event.target as HTMLInputElement).value);
+    }
+  }
+
   return (
     <GridToolbarContainer>
       <Button
@@ -35,16 +39,32 @@ function Toolbar() {
         startIcon={<FileDownload />}>
         Exportar
       </Button>
+      <GridToolbarQuickFilter
+        placeholder="Pressione ENTER"
+        onKeyDown={handleSearchKeyDown}
+      />
     </GridToolbarContainer>
   );
 }
+
+export type CompanyTableProps = {
+  companies: EnergizouRegistrations.Models.CompanyPreview[];
+  paginationModel: { page: number; pageSize: number };
+  onPaginationModelChange: (newPaginationModel: {
+    page: number;
+    pageSize: number;
+  }) => void;
+  onSearch: ToolBarProps['onSearch'];
+  totalCompaniesCount: number;
+};
 
 export default function CompanyTable({
   companies,
   paginationModel,
   onPaginationModelChange,
   totalCompaniesCount: count,
-}: Props) {
+  onSearch,
+}: CompanyTableProps) {
   const navigate = useNavigate();
 
   const rows = [
@@ -57,7 +77,11 @@ export default function CompanyTable({
       flex: 1,
       valueFormatter: ({ value }) => formatCnpj(value),
     },
-    { field: 'reason', headerName: 'Razão Social', flex: 1 },
+    {
+      field: 'reason',
+      headerName: 'Razão Social',
+      flex: 1,
+    },
     {
       field: 'phone',
       headerName: 'Telefone',
@@ -65,7 +89,11 @@ export default function CompanyTable({
       valueFormatter: ({ value }) =>
         formatPhoneNumber(value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')),
     },
-    { field: 'representative', headerName: 'Representante', flex: 1 },
+    {
+      field: 'representative',
+      headerName: 'Representante',
+      flex: 1,
+    },
   ];
 
   return (
@@ -107,7 +135,14 @@ export default function CompanyTable({
         slots={{
           toolbar: Toolbar,
         }}
+        slotProps={{
+          toolbar: {
+            onSearch,
+          },
+        }}
         sx={{ height: '100%' }}
+        filterMode="server"
+        disableColumnFilter
       />
     </Box>
   );

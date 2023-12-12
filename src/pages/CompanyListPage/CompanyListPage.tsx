@@ -3,6 +3,7 @@ import PageTitleBox from '@/components/PageTitleBox';
 import { Alert, Box, Grid } from '@mui/material';
 import { getCompanies } from '@/models/company';
 import {
+  type LoaderFunctionArgs,
   useLoaderData,
   useOutlet,
   useRouteError,
@@ -11,7 +12,7 @@ import {
 import type { AxiosInstance } from 'axios';
 
 export function getCompaniesLoader(axiosInstance: AxiosInstance) {
-  return async function ({ request }: { request: Request }) {
+  return async function ({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
     const params = Object.fromEntries(url.searchParams);
     return await getCompanies(axiosInstance, params);
@@ -39,10 +40,16 @@ export default function CompanyListPage() {
       newPaginationModel.page = 1;
     }
     setSearchParams({
+      ...Object.fromEntries(searchParams),
       page: newPaginationModel.page.toString(),
       limit: newPaginationModel.pageSize.toString(),
-      sort: searchParams.get('sort') || 'reason',
-      order: searchParams.get('order') || 'ASC',
+    });
+  }
+
+  function handleSearch(search: string) {
+    setSearchParams({
+      ...Object.fromEntries(searchParams),
+      search,
     });
   }
 
@@ -56,6 +63,7 @@ export default function CompanyListPage() {
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
         totalCompaniesCount={data.meta.totalItems}
+        onSearch={handleSearch}
       />
     );
   }
