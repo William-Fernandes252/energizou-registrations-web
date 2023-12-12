@@ -6,14 +6,18 @@ const resourceUri = '/companies';
 export type ListResponse =
   EnergizouRegistrations.RestAPI.ResponsePaginatedData<EnergizouRegistrations.Models.CompanyPreview>;
 
-export type CompanyRegistrationPayload = Omit<
-  EnergizouRegistrations.Models.Company,
-  'users' | 'address' | 'created' | 'updated' | 'representative'
+export type CompanyMutationPayload = Partial<
+  Omit<
+    EnergizouRegistrations.Models.Company,
+    'users' | 'address' | 'created' | 'updated' | 'representative' | 'id'
+  >
 > & {
-  representative: Omit<EnergizouRegistrations.Models.User, 'id' | 'company'> & {
+  representative: Partial<
+    Omit<EnergizouRegistrations.Models.User, 'id' | 'company'>
+  > & {
     password: string;
   };
-  address: EnergizouRegistrations.Models.Address;
+  address: Partial<EnergizouRegistrations.Models.Address>;
 };
 
 export type SortableField = keyof Pick<
@@ -64,7 +68,7 @@ export async function getCompany(
  */
 export async function registerCompany(
   axiosInstance: AxiosInstance,
-  company: CompanyRegistrationPayload,
+  company: CompanyMutationPayload,
 ): Promise<EnergizouRegistrations.Models.Company> {
   try {
     const { data } = await axiosInstance.post(

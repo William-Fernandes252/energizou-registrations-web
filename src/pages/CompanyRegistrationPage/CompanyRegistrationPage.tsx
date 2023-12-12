@@ -3,11 +3,8 @@ import CNPJInput from '@/components/CNPJInput';
 import PhoneNumberInput from '@/components/PhoneNumberInput/PhoneNumberInput';
 import StreetNumberInput from '@/components/StreetNumberInput';
 import { ValidationError } from '@/errors';
-import useAddressByCEP from '@/hooks/useAddressByCEP';
-import {
-  type CompanyRegistrationPayload,
-  registerCompany,
-} from '@/models/company';
+import useCompanyMutationForm from '@/hooks/useCompanyMutationForm';
+import { type CompanyMutationPayload, registerCompany } from '@/models/company';
 import { DomainAdd, Warning } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
@@ -20,7 +17,6 @@ import {
   Divider,
   Typography,
   FormHelperText,
-  TextFieldProps,
   List,
   ListItem,
   ListItemIcon,
@@ -28,28 +24,15 @@ import {
   Alert,
 } from '@mui/material';
 import type { AxiosInstance } from 'axios';
-import { AvailableProviders } from 'cep-promise';
-import {
-  useState,
-  type ElementType,
-  type PropsWithChildren,
-  useEffect,
-} from 'react';
-import {
-  type ActionFunctionArgs,
-  Form,
-  redirect,
-  useActionData,
-  useNavigation,
-  useSubmit,
-} from 'react-router-dom';
+import type { ElementType, PropsWithChildren } from 'react';
+import { type ActionFunctionArgs, Form, redirect } from 'react-router-dom';
 
 export function getRegisterCompanyAction(axiosInstance: AxiosInstance) {
   return async function ({ request }: ActionFunctionArgs) {
     try {
       await registerCompany(
         axiosInstance,
-        (await request.json()) as unknown as CompanyRegistrationPayload,
+        (await request.json()) as unknown as CompanyMutationPayload,
       );
       return redirect('/companies');
     } catch (error) {
@@ -67,19 +50,6 @@ type FormSectionGridProps = PropsWithChildren<
   } & GridProps
 >;
 
-function RegistrationTextField({ name, label, ...props }: TextFieldProps) {
-  return (
-    <TextField
-      variant="outlined"
-      fullWidth
-      label={label}
-      name={name}
-      {...props}
-      size="small"
-    />
-  );
-}
-
 function FormSectionGrid({ children, title, ...props }: FormSectionGridProps) {
   return (
     <Grid {...props}>
@@ -93,82 +63,16 @@ function FormSectionGrid({ children, title, ...props }: FormSectionGridProps) {
 }
 
 export default function CompanyRegistrationPage() {
-  const navigation = useNavigation();
-  const submitting = navigation.state === 'submitting';
-  const [registrationForm, setRegistrationForm] = useState({
-    email: '',
-    name: '',
-    password: '',
-    reason: '',
-    cnpj: '',
-    phone: '',
-    street: '',
-    number: '',
-    cep: '',
-  });
-  const submit = useSubmit();
-  const errors = useActionData() as Awaited<
-    ReturnType<ReturnType<typeof getRegisterCompanyAction>>
-  >;
-  const { address, loading: fetchingCEP } = useAddressByCEP(
-    registrationForm.cep,
-    { providers: ['viacep', 'brasilapi'] as AvailableProviders[] },
-  );
-
-  useEffect(() => {
-    if (address) {
-      setRegistrationForm(prev => ({
-        ...prev,
-        street: address.street,
-        cep: address.cep,
-      }));
-    }
-  }, [address]);
-
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = event.target;
-    setRegistrationForm(prev => ({ ...prev, [name]: value }));
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const payload: Partial<
-      Omit<CompanyRegistrationPayload, 'address' | 'representative'>
-    > & {
-      address: Partial<CompanyRegistrationPayload['address']>;
-      representative: Partial<CompanyRegistrationPayload['representative']>;
-    } = { address: {}, representative: {} };
-
-    const infoKeys: (keyof CompanyRegistrationPayload)[] = [
-      'cnpj',
-      'phone',
-      'reason',
-    ];
-    // @ts-ignore
-    infoKeys.forEach(key => (payload[key] = registrationForm[key]));
-
-    const addressKeys: (keyof CompanyRegistrationPayload['address'])[] = [
-      'street',
-      'number',
-      'cep',
-    ];
-    addressKeys.forEach(
-      key => (payload.address[key] = registrationForm[key] as string),
-    );
-
-    const representativeKeys: (keyof CompanyRegistrationPayload['representative'])[] =
-      ['name', 'email', 'password'];
-    representativeKeys.forEach(
-      key => (payload.representative[key] = registrationForm[key] as string),
-    );
-
-    submit(payload, {
-      method: 'POST',
-      action: '/companies/new',
-      encType: 'application/json',
-    });
-  }
-
+  const {
+    addressInput,
+    handleInfoInputChange,
+    handleAddressInputChange,
+    handleRepresentativeInputChange,
+    handleSubmit,
+    errors,
+    submitting,
+    fetchingCEP,
+  } = useCompanyMutationForm('/companies/new', 'POST');
   return (
     <Card>
       <CardContent>
@@ -185,34 +89,34 @@ export default function CompanyRegistrationPage() {
             title="Representante"
             sx={{ mb: 2 }}>
             <Grid item xs={12}>
-              <RegistrationTextField
+              <TextField
                 label="Email"
                 type="email"
                 name="email"
                 disabled={submitting}
                 required
                 autoFocus
-                onChange={handleChange}
+                onChange={handleRepresentativeInputChange}
               />
             </Grid>
             <Grid item xs={12}>
-              <RegistrationTextField
+              <TextField
                 label="Nome"
                 name="name"
                 required
                 disabled={submitting}
-                onChange={handleChange}
+                onChange={handleRepresentativeInputChange}
               />
             </Grid>
             <Grid item xs={12}>
               <FormControl>
-                <RegistrationTextField
+                <TextField
                   label="Senha"
                   type="password"
                   name="password"
                   disabled={submitting}
                   required
-                  onChange={handleChange}
+                  onChange={handleRepresentativeInputChange}
                 />
                 <FormHelperText>
                   Deve ter pelo menos uma letra minúscula, uma maiúscula, um
@@ -227,16 +131,16 @@ export default function CompanyRegistrationPage() {
             title="Cadastro"
             sx={{ mb: 2 }}>
             <Grid item xs={12}>
-              <RegistrationTextField
+              <TextField
                 label="Razão Social"
                 required
                 name="reason"
                 disabled={submitting}
-                onChange={handleChange}
+                onChange={handleInfoInputChange}
               />
             </Grid>
             <Grid item xs={12}>
-              <RegistrationTextField
+              <TextField
                 name="cnpj"
                 label="CNPJ"
                 id="cnpj-input"
@@ -245,11 +149,11 @@ export default function CompanyRegistrationPage() {
                 }}
                 required
                 disabled={submitting}
-                onChange={handleChange}
+                onChange={handleInfoInputChange}
               />
             </Grid>
             <Grid item xs={12}>
-              <RegistrationTextField
+              <TextField
                 name="phone"
                 id="phone-number-input"
                 label="Telefone"
@@ -258,7 +162,7 @@ export default function CompanyRegistrationPage() {
                 }}
                 required
                 disabled={submitting}
-                onChange={handleChange}
+                onChange={handleInfoInputChange}
               />
             </Grid>
           </FormSectionGrid>
@@ -268,7 +172,7 @@ export default function CompanyRegistrationPage() {
             title="Endereço"
             sx={{ mb: 2 }}>
             <Grid item xs={12}>
-              <RegistrationTextField
+              <TextField
                 name="cep"
                 id="cep-input"
                 label="CEP"
@@ -277,21 +181,21 @@ export default function CompanyRegistrationPage() {
                 }}
                 required
                 disabled={submitting}
-                onChange={handleChange}
+                onChange={handleAddressInputChange}
               />
             </Grid>
             <Grid item xs={12}>
-              <RegistrationTextField
+              <TextField
                 label="Rua"
                 required
                 name="street"
-                value={registrationForm.street}
+                value={addressInput.street}
                 disabled={submitting || fetchingCEP}
-                onChange={handleChange}
+                onChange={handleAddressInputChange}
               />
             </Grid>
             <Grid item xs={12}>
-              <RegistrationTextField
+              <TextField
                 name="number"
                 id="number-input"
                 label="Número"
@@ -300,7 +204,7 @@ export default function CompanyRegistrationPage() {
                 }}
                 required
                 disabled={submitting || fetchingCEP}
-                onChange={handleChange}
+                onChange={handleAddressInputChange}
               />
             </Grid>
           </FormSectionGrid>
