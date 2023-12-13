@@ -82,7 +82,7 @@ export default function CompanyDetailPage() {
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1">Endereço</Typography>
-              <Typography variant="body2">{company.address}</Typography>
+                <Typography variant="body2">{`${company.address.street}, ${company.address.number}`}</Typography>
             </Grid>
           </Grid>
         </Section>

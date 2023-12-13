@@ -11,7 +11,7 @@ namespace EnergizouRegistrations {
       phone: string;
       representative: string;
       users: User[];
-      address: string;
+      address: Address;
       created: Date;
     }
 
