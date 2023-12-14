@@ -1,11 +1,13 @@
 import CEPInput from '@/components/CEPInput';
 import CNPJInput from '@/components/CNPJInput';
+import CompanyMutationFormSectionGrid from '@/components/CompanyMutationFormSectionGrid';
+import FormErrorsAlert from '@/components/FormErrorsAlert';
 import PhoneNumberInput from '@/components/PhoneNumberInput/PhoneNumberInput';
 import StreetNumberInput from '@/components/StreetNumberInput';
 import { ValidationError } from '@/errors';
 import useCompanyMutationForm from '@/hooks/useCompanyMutationForm';
 import { type CompanyMutationPayload, registerCompany } from '@/models/company';
-import { DomainAdd, Warning } from '@mui/icons-material';
+import { DomainAdd } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
   Card,
@@ -13,18 +15,12 @@ import {
   TextField,
   Grid,
   FormControl,
-  GridProps,
   Divider,
   Typography,
   FormHelperText,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Alert,
 } from '@mui/material';
 import type { AxiosInstance } from 'axios';
-import type { ElementType, PropsWithChildren } from 'react';
+import { ChangeEventHandler } from 'react';
 import { type ActionFunctionArgs, Form, redirect } from 'react-router-dom';
 
 export function getRegisterCompanyAction(axiosInstance: AxiosInstance) {
@@ -42,24 +38,6 @@ export function getRegisterCompanyAction(axiosInstance: AxiosInstance) {
       throw error;
     }
   };
-}
-
-type FormSectionGridProps = PropsWithChildren<
-  {
-    title: ElementType | string;
-  } & GridProps
->;
-
-function FormSectionGrid({ children, title, ...props }: FormSectionGridProps) {
-  return (
-    <Grid {...props}>
-      <Grid item xs={12}>
-        <Typography variant="h6">{title}</Typography>
-        <Divider />
-      </Grid>
-      {children}
-    </Grid>
-  );
 }
 
 export default function CompanyRegistrationPage() {
@@ -83,7 +61,7 @@ export default function CompanyRegistrationPage() {
         </Typography>
         <Divider sx={{ mb: 2 }} />
         <Form onSubmit={handleSubmit}>
-          <FormSectionGrid
+          <CompanyMutationFormSectionGrid
             container
             spacing={2}
             title="Representante"
@@ -96,7 +74,9 @@ export default function CompanyRegistrationPage() {
                 disabled={submitting}
                 required
                 autoFocus
-                onChange={handleRepresentativeInputChange}
+                onChange={
+                  handleRepresentativeInputChange as ChangeEventHandler<HTMLInputElement>
+                }
               />
             </Grid>
             <Grid item xs={12}>
@@ -105,7 +85,9 @@ export default function CompanyRegistrationPage() {
                 name="name"
                 required
                 disabled={submitting}
-                onChange={handleRepresentativeInputChange}
+                onChange={
+                  handleRepresentativeInputChange as ChangeEventHandler<HTMLInputElement>
+                }
               />
             </Grid>
             <Grid item xs={12}>
@@ -116,7 +98,9 @@ export default function CompanyRegistrationPage() {
                   name="password"
                   disabled={submitting}
                   required
-                  onChange={handleRepresentativeInputChange}
+                  onChange={
+                    handleRepresentativeInputChange as ChangeEventHandler<HTMLInputElement>
+                  }
                 />
                 <FormHelperText>
                   Deve ter pelo menos uma letra minúscula, uma maiúscula, um
@@ -124,8 +108,8 @@ export default function CompanyRegistrationPage() {
                 </FormHelperText>
               </FormControl>
             </Grid>
-          </FormSectionGrid>
-          <FormSectionGrid
+          </CompanyMutationFormSectionGrid>
+          <CompanyMutationFormSectionGrid
             container
             spacing={2}
             title="Cadastro"
@@ -165,8 +149,8 @@ export default function CompanyRegistrationPage() {
                 onChange={handleInfoInputChange}
               />
             </Grid>
-          </FormSectionGrid>
-          <FormSectionGrid
+          </CompanyMutationFormSectionGrid>
+          <CompanyMutationFormSectionGrid
             container
             spacing={2}
             title="Endereço"
@@ -207,7 +191,7 @@ export default function CompanyRegistrationPage() {
                 onChange={handleAddressInputChange}
               />
             </Grid>
-          </FormSectionGrid>
+          </CompanyMutationFormSectionGrid>
           <LoadingButton
             type="submit"
             loading={submitting}
