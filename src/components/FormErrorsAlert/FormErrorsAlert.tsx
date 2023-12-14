@@ -13,7 +13,7 @@ type Props = {
 
 export default function FormErrorsAlert({ errors }: Props) {
   return (
-    <Alert severity="error" icon={false} sx={{ mt: 2 }}>
+    <Alert severity="error" icon={false} sx={{ mt: 2 }} role="alert">
       <List disablePadding>
         {Object.values(errors).map((error, index) => (
           <ListItem key={index} disablePadding>
