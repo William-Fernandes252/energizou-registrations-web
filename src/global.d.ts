@@ -9,7 +9,7 @@ namespace EnergizouRegistrations {
       reason: string;
       cnpj: string;
       phone: string;
-      representative: string;
+      representative: User;
       users: User[];
       address: Address;
       created: Date;

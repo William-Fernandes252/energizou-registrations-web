@@ -93,6 +93,7 @@ export default function CompanyTable({
       field: 'representative',
       headerName: 'Representante',
       flex: 1,
+      valueFormatter: ({ value }) => value?.email,
     },
   ];
 

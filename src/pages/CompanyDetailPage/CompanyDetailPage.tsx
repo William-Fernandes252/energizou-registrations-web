@@ -88,7 +88,9 @@ export default function CompanyDetailPage() {
         </Section>
         <Section>
           <SectionTitle>Representante</SectionTitle>
-          <Typography variant="body2">{company.representative}</Typography>
+            <Typography variant="body2">
+              {company.representative.email}
+            </Typography>
         </Section>
         <Section>
           <SectionTitle>Usuários</SectionTitle>
