@@ -8,11 +8,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Divider,
   Grid,
   List,
@@ -120,27 +115,26 @@ export default function CompanyDetailPage() {
           />
         </CardActions>
     </Card>
-      <Dialog open={showConfirmDeleteDialog}>
-        <DialogTitle>Deletar cliente</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Tem certeza que deseja deletar o cliente?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
+      <ConfirmActionDialog
+        open={showConfirmDeleteDialog}
+        title="Deletar cliente"
+        message="Tem certeza que deseja deletar o cliente?"
+        cancelButton={
           <Button onClick={handleClose} color="primary">
             Cancelar
           </Button>
+        }
+        confirmButton={
           <Button
             type="submit"
-            form="delete-form"
+            form="company-delete-form"
             color="warning"
             onClick={handleClose}
             startIcon={<Delete />}>
             Deletar
           </Button>
-        </DialogActions>
-      </Dialog>
+        }
+      />
     </>
   );
 }
