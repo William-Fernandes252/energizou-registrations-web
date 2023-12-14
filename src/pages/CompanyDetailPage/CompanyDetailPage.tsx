@@ -102,6 +102,9 @@ export default function CompanyDetailPage() {
         </Section>
       </CardContent>
         <CardActions>
+          <LinkButton startIcon={<Edit />} to="edit">
+            Editar
+          </LinkButton>
           <Button
             startIcon={<Delete />}
             color="warning"

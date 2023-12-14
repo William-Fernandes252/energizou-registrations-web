@@ -6,10 +6,11 @@ import {
   useGridApiContext,
   GridToolbarQuickFilter,
 } from '@mui/x-data-grid';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Add, FileDownload } from '@mui/icons-material';
 import { formatCnpj, formatPhoneNumber } from '@/utils/format';
 import type { KeyboardEvent } from 'react';
+import LinkButton from '../LinkButton';
 
 type ToolBarProps = {
   onSearch: (search: string) => void;
@@ -27,13 +28,9 @@ function Toolbar({ onSearch }: ToolBarProps) {
 
   return (
     <GridToolbarContainer>
-      <Button
-        color="primary"
-        startIcon={<Add />}
-        component={Link}
-        to="/companies/new">
+      <LinkButton color="primary" startIcon={<Add />} to="/companies/new">
         Cadastrar cliente
-      </Button>
+      </LinkButton>
       <Button
         onClick={() => apiRef.current.exportDataAsCsv({ fileName: 'clientes' })}
         startIcon={<FileDownload />}>

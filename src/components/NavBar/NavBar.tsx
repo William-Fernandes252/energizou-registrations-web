@@ -6,13 +6,12 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import { NavLink } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuth } from '@/contexts/auth';
 import { ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { LogoutOutlined } from '@mui/icons-material';
 import NavBarDrawer from '../NavBarDrawer';
+import LinkButton from '../LinkButton';
 
 const drawerWidth = 240;
 
@@ -73,13 +72,9 @@ export default function NavBar() {
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {[...navItems.entries()].map(([path, page], index) => (
-              <Button
-                key={index}
-                sx={{ color: 'white' }}
-                component={NavLink}
-                to={path}>
+              <LinkButton key={index} sx={{ color: 'white' }} to={path}>
                 {page}
-              </Button>
+              </LinkButton>
             ))}
             {isAuthenticated && (
               <IconButton
