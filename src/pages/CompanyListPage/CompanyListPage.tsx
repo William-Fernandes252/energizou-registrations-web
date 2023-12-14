@@ -73,11 +73,11 @@ export default function CompanyListPage() {
       <PageTitleBox title="Clientes" />
       <Box>
         <Grid container spacing={2}>
-          <Grid item xs={outlet ? 8 : 12}>
+          <Grid item md={outlet ? 8 : 12}>
             {content}
           </Grid>
           {outlet && (
-            <Grid item xs={4}>
+            <Grid item md={4} sm={12}>
               {outlet}
             </Grid>
           )}
