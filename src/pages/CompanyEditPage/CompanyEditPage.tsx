@@ -3,7 +3,7 @@ import CNPJInput from '@/components/CNPJInput';
 import CompanyMutationFormSectionGrid from '@/components/CompanyMutationFormSectionGrid';
 import ConfirmActionDialog from '@/components/ConfirmActionDialog';
 import FormErrorsAlert from '@/components/FormErrorsAlert/FormErrorsAlert';
-import PhoneNumberInput from '@/components/PhoneNumberInput/PhoneNumberInput';
+import PhoneNumberInput from '@/components/PhoneNumberInput';
 import StreetNumberInput from '@/components/StreetNumberInput';
 import { ValidationError } from '@/errors';
 import useCompanyMutationForm from '@/hooks/useCompanyMutationForm';

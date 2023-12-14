@@ -2,7 +2,7 @@ import CEPInput from '@/components/CEPInput';
 import CNPJInput from '@/components/CNPJInput';
 import CompanyMutationFormSectionGrid from '@/components/CompanyMutationFormSectionGrid';
 import FormErrorsAlert from '@/components/FormErrorsAlert';
-import PhoneNumberInput from '@/components/PhoneNumberInput/PhoneNumberInput';
+import PhoneNumberInput from '@/components/PhoneNumberInput';
 import StreetNumberInput from '@/components/StreetNumberInput';
 import { ValidationError } from '@/errors';
 import useCompanyMutationForm from '@/hooks/useCompanyMutationForm';
