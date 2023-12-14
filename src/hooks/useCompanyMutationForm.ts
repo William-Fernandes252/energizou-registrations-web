@@ -4,6 +4,7 @@ import { AvailableProviders } from 'cep-promise';
 import { useState, useEffect } from 'react';
 import { useNavigation, useSubmit, useActionData } from 'react-router-dom';
 import useAddressByCEP from './useAddressByCEP';
+import { SelectChangeEvent } from '@mui/material';
 
 export default function useCompanyMutationForm(
   action: `/companies/${string}`,
@@ -54,17 +55,25 @@ export default function useCompanyMutationForm(
   }
 
   function handleRepresentativeInputChange(
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent,
   ) {
     const { name, value } = event.target;
-    setRepresentativeInput(prev => ({ ...prev, [name]: value }));
+    if (name === 'representative') {
+      setRepresentativeInput(value);
+      return;
+    }
+    setRepresentativeInput(prev => ({ ...(prev as {}), [name]: value }));
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const payload: CompanyMutationPayload = {
-      address: addressInput,
-      representative: representativeInput,
+    const payload: Partial<CompanyMutationPayload> = {
+      address:
+        Object.entries(addressInput).length > 0 ? addressInput : undefined,
+      representative:
+        Object.entries(representativeInput).length > 0
+          ? representativeInput
+          : undefined,
       ...infoInput,
     };
     submit(payload, {

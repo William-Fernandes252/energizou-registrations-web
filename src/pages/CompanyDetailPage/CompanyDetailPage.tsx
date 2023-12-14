@@ -1,7 +1,8 @@
-import { ValidationError } from '@/errors';
+import LinkButton from '@/components/LinkButton';
+import ConfirmActionDialog from '@/components/ConfirmActionDialog';
 import { getCompany } from '@/models/company';
 import { formatCnpj, formatPhoneNumber } from '@/utils/format';
-import { Business, Delete, Person } from '@mui/icons-material';
+import { Business, Delete, Edit, Person } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -24,7 +25,7 @@ export function getCompanyDetailLoader(axiosInstance: AxiosInstance) {
   return async function ({
     params,
   }: LoaderFunctionArgs<{ params: { cnpj: string } }>) {
-    return await getCompany(axiosInstance, params.id!);
+    return await getCompany(axiosInstance, params.cnpj!);
   };
 }
 
@@ -38,9 +39,7 @@ function Section({ children }: PropsWithChildren) {
 
 export default function CompanyDetailPage() {
   const [showConfirmDeleteDialog, setshowConfirmDeleteDialog] = useState(false);
-  const company = useLoaderData() as Awaited<
-    ReturnType<ReturnType<typeof getCompanyDetailLoader>>
-  >;
+  const company = useLoaderData() as Awaited<ReturnType<typeof getCompany>>;
 
   function handleClickDelete() {
     setshowConfirmDeleteDialog(true);
@@ -52,55 +51,55 @@ export default function CompanyDetailPage() {
 
   return (
     <>
-    <Card>
-      <CardContent>
-        <Typography
-          variant="h5"
-          sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-          <Business fontSize="inherit" sx={{ mr: 1 }} /> {company.reason}
-        </Typography>
-        <Divider sx={{ mb: 2 }} />
-        <Section>
-          <SectionTitle>Cadastro</SectionTitle>
-          <Grid container spacing={1}>
-            <Grid item xs={6}>
-              <Typography variant="body1">CNPJ</Typography>
-              <Typography variant="body2">
-                {formatCnpj(company.cnpj)}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">Telefone</Typography>
-              <Typography variant="body2">
-                {formatPhoneNumber(company.phone)}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1">Endereço</Typography>
+      <Card>
+        <CardContent>
+          <Typography
+            variant="h5"
+            sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
+            <Business fontSize="inherit" sx={{ mr: 1 }} /> {company.reason}
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Section>
+            <SectionTitle>Cadastro</SectionTitle>
+            <Grid container spacing={1}>
+              <Grid item xs={6}>
+                <Typography variant="body1">CNPJ</Typography>
+                <Typography variant="body2">
+                  {formatCnpj(company.cnpj)}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body1">Telefone</Typography>
+                <Typography variant="body2">
+                  {formatPhoneNumber(company.phone)}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body1">Endereço</Typography>
                 <Typography variant="body2">{`${company.address.street}, ${company.address.number}`}</Typography>
+              </Grid>
             </Grid>
-          </Grid>
-        </Section>
-        <Section>
-          <SectionTitle>Representante</SectionTitle>
+          </Section>
+          <Section>
+            <SectionTitle>Representante</SectionTitle>
             <Typography variant="body2">
               {company.representative.email}
             </Typography>
-        </Section>
-        <Section>
-          <SectionTitle>Usuários</SectionTitle>
-          <List dense disablePadding>
-            {company.users.map(user => (
+          </Section>
+          <Section>
+            <SectionTitle>Usuários</SectionTitle>
+            <List dense disablePadding>
+              {company.users.map(user => (
                 <ListItem key={user.id}>
-                <ListItemIcon>
-                  <Person />
-                </ListItemIcon>
-                <ListItemText>{user.email}</ListItemText>
-              </ListItem>
-            ))}
-          </List>
-        </Section>
-      </CardContent>
+                  <ListItemIcon>
+                    <Person />
+                  </ListItemIcon>
+                  <ListItemText>{user.email}</ListItemText>
+                </ListItem>
+              ))}
+            </List>
+          </Section>
+        </CardContent>
         <CardActions>
           <LinkButton startIcon={<Edit />} to="edit">
             Editar
@@ -111,13 +110,9 @@ export default function CompanyDetailPage() {
             onClick={handleClickDelete}>
             Deletar
           </Button>
-          <Form
-            method="post"
-            action={`/companies/${company.id}/delete`}
-            id="delete-form"
-          />
+          <Form method="post" action={'delete'} id="company-delete-form" />
         </CardActions>
-    </Card>
+      </Card>
       <ConfirmActionDialog
         open={showConfirmDeleteDialog}
         title="Deletar cliente"

@@ -11,6 +11,12 @@ import CompanyDetailPage, {
   getCompanyDetailLoader,
 } from '@/pages/CompanyDetailPage';
 import { getDeleteCompanyAction } from './DeleteCompany';
+import CompanyEditPage from '@/pages/CompanyEditPage';
+import {
+  getAddUserAction,
+  getRemoveUserAction,
+  getUpdateCompanyAction,
+} from '@/pages/CompanyEditPage/CompanyEditPage';
 
 export function createRoutes(axios: AxiosInstance): RouteObject[] {
   return [
@@ -34,13 +40,29 @@ export function createRoutes(axios: AxiosInstance): RouteObject[] {
               action: getRegisterCompanyAction(axios),
             },
             {
-              path: ':id',
+              path: ':cnpj',
               loader: getCompanyDetailLoader(axios),
               element: <CompanyDetailPage />,
               children: [
                 {
                   path: 'delete',
                   action: getDeleteCompanyAction(axios),
+                },
+              ],
+            },
+            {
+              path: ':cnpj/edit',
+              element: <CompanyEditPage />,
+              action: getUpdateCompanyAction(axios),
+              loader: getCompanyDetailLoader(axios),
+              children: [
+                {
+                  path: 'users/add-user',
+                  action: getAddUserAction(axios),
+                },
+                {
+                  path: 'users/:userId/remove-user',
+                  action: getRemoveUserAction(axios),
                 },
               ],
             },

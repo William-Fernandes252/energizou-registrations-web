@@ -12,11 +12,13 @@ export type CompanyMutationPayload = Partial<
     'users' | 'address' | 'created' | 'updated' | 'representative' | 'id'
   >
 > & {
-  representative: Partial<
-    Omit<EnergizouRegistrations.Models.User, 'id' | 'company'>
-  > & {
-    password: string;
-  };
+  representative:
+    | Partial<
+        Omit<EnergizouRegistrations.Models.User, 'id' | 'company'> & {
+          password: string;
+        }
+      >
+    | EnergizouRegistrations.Models.User['id'];
   address: Partial<EnergizouRegistrations.Models.Address>;
 };
 
@@ -72,6 +74,41 @@ export async function registerCompany(
     throw handleApiCallError(error);
   }
 }
+
+export async function updateCompany(
+  axiosInstance: AxiosInstance,
+  id: EnergizouRegistrations.Models.Company['id'],
+  payload: CompanyMutationPayload,
+): Promise<EnergizouRegistrations.Models.Company> {
+  try {
+    const { data } = await axiosInstance.patch(`${resourceUri}/${id}`, payload);
+    return data;
+  } catch (error) {
+    throw handleApiCallError(error);
+  }
+}
+
+export async function addUserToCompany(
+  axiosInstance: AxiosInstance,
+  id: EnergizouRegistrations.Models.Company['id'],
+  payload: Omit<EnergizouRegistrations.Models.User, 'id' | 'company'>,
+): Promise<void> {
+  try {
+    await axiosInstance.post(`${resourceUri}/${id}/users`, payload);
+  } catch (error) {
+    throw handleApiCallError(error);
+  }
+}
+
+export async function removeUserFromCompany(
+  axios: AxiosInstance,
+  id: EnergizouRegistrations.Models.Company['id'],
+  userId: EnergizouRegistrations.Models.User['id'],
+) {
+  try {
+    await axios.delete(`${resourceUri}/${id}/users/${userId}`);
+  } catch (error) {
+    throw handleApiCallError(error);
   }
 }
 
